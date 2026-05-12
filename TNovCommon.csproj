@@ -137,6 +137,7 @@
       <DependentUpon>AppVersionWPF.xaml</DependentUpon>
     </Compile>
     <Compile Include="AssemblyLoader.cs" />
+    <Compile Include="AsyncHelper.cs" />
     <Compile Include="AuthenticationService.cs" />
     <Compile Include="BoundingBoxXYZExtensions.cs" />
     <Compile Include="CredentialManager.cs" />
@@ -286,6 +287,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="_notes\notes.md" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

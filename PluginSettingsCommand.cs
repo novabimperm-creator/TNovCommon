@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-/*
+
 namespace TNovCommon
 {
     [Transaction(TransactionMode.Manual)]
@@ -36,7 +36,29 @@ namespace TNovCommon
             try
             {
 
-                
+                // ---------- ТОЛЬКО ДЛЯ ЛОКАЛЬНОГО ТЕСТИРОВАНИЯ: создать таблицы, если их нет ----------
+                /* Раскомментируйте для первого запуска, затем уберите
+                    // ---------- ТОЛЬКО ДЛЯ ДИАГНОСТИКИ ----------
+                    try
+                    {
+                        Task.Run(() => DatabaseInitializer.InitializeAsync()).Wait();
+                    }
+                    catch (AggregateException ae)
+                    {
+                        // Показываем все внутренние исключения
+                        string errMsg = "";
+                        foreach (var inner in ae.InnerExceptions)
+                            errMsg += inner.Message + "\n" + inner.StackTrace + "\n\n";
+                        TaskDialog.Show("Ошибка инициализации БД", errMsg);
+                        return Result.Failed;
+                    }
+                    catch (Exception ex)
+                    {
+                        TaskDialog.Show("Ошибка", ex.ToString());
+                        return Result.Failed;
+                    }
+                    // ---------------------------------------------
+                */
                 #region БД
                 //аутентификация
                 IAuthProvider authProvider = TNovProvider.GetAuthProvider();
@@ -91,7 +113,12 @@ namespace TNovCommon
 
                 #endregion
 
-                
+                /*
+                var editor = new TextEditorWindow(dataService, user.UserId, DBCommandName);
+                editor.ShowDialog();
+
+                var editor1 = new TextEditorWindow(dataService, docName, DBCommandName);
+                editor1.ShowDialog();*/
 
                 return Result.Succeeded;
             }
@@ -105,11 +132,3 @@ namespace TNovCommon
         
     }
 }
-*/
-
-/*
-                var editor = new TextEditorWindow(dataService, user.UserId, DBCommandName);
-                editor.ShowDialog();
-
-                var editor1 = new TextEditorWindow(dataService, docName, DBCommandName);
-                editor1.ShowDialog();*/

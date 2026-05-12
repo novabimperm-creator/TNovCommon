@@ -44,7 +44,7 @@ namespace TNovCommon
                     File.WriteAllText(jsonpath0, JsonConvert.SerializeObject(viewModel0));
                 }
                 catch (Exception) { }
-            }/*
+            }
             //десериализация из БД (приоритетнее)
             IAuthProvider authProvider = TNovProvider.GetAuthProvider();
             UserInfo user = AuthenticationService.Authenticate(authProvider);
@@ -63,7 +63,7 @@ namespace TNovCommon
                 }
                 catch (Exception) { }
             }
-            */
+            
 
             try
             {
@@ -95,7 +95,7 @@ namespace TNovCommon
             {
                 // Откл расширенные логи в настройках TNov
                 File.WriteAllText(jsonpath0, JsonConvert.SerializeObject(viewModel0));
-                /*
+
                 // Откл расширенные логи в базе
                 IAuthProvider authProvider = TNovProvider.GetAuthProvider();
                 UserInfo user = AuthenticationService.Authenticate(authProvider);
@@ -111,7 +111,7 @@ namespace TNovCommon
                     Task.Run(() =>
                         dataService.SaveUserDataAsync(user.UserId, "Настройки программы", viewModel0)).Wait(TimeSpan.FromSeconds(5));
                 }
-                */
+
                 // Откл расширенные логи при текущем запуске
                 _extendedLogs = false;
 

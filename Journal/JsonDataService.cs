@@ -76,6 +76,34 @@ namespace TNovCommon
             var settings = new JsonSerializerSettings { Formatting = Formatting.Indented };
             string json = JsonConvert.SerializeObject(items, settings);
 
+            UIApplication uiApp = RevitAPI.UiApplication; Autodesk.Revit.ApplicationServices.Application rvtApp = uiApp.Application;
+            Document doc = RevitAPI.Document;
+            string docName = doc.Title.ToString(); docName = docName.Replace(",", " ");
+            string userName = rvtApp.Username; userName = userName.Replace(",", "");
+            string docNameUserName = "_" + userName; docName = docName.Replace(docNameUserName, "");
+            docName = docName.Replace(",", "");
+
+            #region БД
+            //аутентификация
+            IAuthProvider authProvider = TNovProvider.GetAuthProvider();
+
+            UserInfo user = AuthenticationService.Authenticate(authProvider);
+            if (user == null)
+                return;
+
+            var repo = new PostgresRepository(ConnectionStringProvider.GetConnectionString());
+
+            var userTask = Task.Run(() => repo.GetOrCreateUserAsync(user.Upn, user.DisplayName));
+            if (!userTask.Wait(TimeSpan.FromSeconds(5)))
+                throw new TimeoutException("Не удалось подключиться к БД (превышен таймаут).");
+            user = userTask.Result; //получаем user из БД
+
+            //работа с данными
+            var dataService = new DataService(repo);
+            
+            AsyncHelper.RunSync(() => dataService.SaveModelDataAsync(docName, "Автопроверки", json));
+            #endregion
+
             lock (_fileLock)
             {
                 for (int i = 0; i < 3; i++)
@@ -89,6 +117,8 @@ namespace TNovCommon
                 }
                 throw new IOException($"Не удалось сохранить файл {jsonPath} после трёх попыток.");
             }
+
+            
         }
 
         public static List<CheckItem> Load(string jsonPath)

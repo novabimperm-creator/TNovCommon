@@ -1,0 +1,104 @@
+﻿<Window x:Class="TNovCommon.JournalWPF"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TNovCommon"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+                Height="450" Width="800"
+        WindowStartupLocation="CenterScreen"
+        AllowsTransparency="True"
+Background="Transparent"
+        
+ResizeMode="NoResize" 
+WindowStyle="None">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../ButtonStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+        </Window.Resources>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="30"
+              ResizeBorderThickness="5"
+              GlassFrameThickness="0"
+              CornerRadius="12"/>
+    </WindowChrome.WindowChrome>
+    <Border CornerRadius="12"
+        Background="White"
+        BorderBrush="#FF008E43"
+        BorderThickness="1">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="55"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30 px"/>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">
+                <Border Height="30" Background="#FF008E43" VerticalAlignment="Top" CornerRadius="12 0 0 0">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource RoundButtonStyle}" 
+Click="CloseButton_Click" Content="✕"
+HorizontalAlignment="Center" VerticalAlignment="Center"
+Width="20" Height="20" Margin="5,0"
+WindowChrome.IsHitTestVisibleInChrome="True"/>
+                        <Button Style="{StaticResource RoundButtonStyle2}" 
+Click="HelpButton_Click" Content="?"
+HorizontalAlignment="Center" VerticalAlignment="Center"
+Width="20" Height="20" Margin="0"
+WindowChrome.IsHitTestVisibleInChrome="True"/>
+                    </StackPanel>
+
+                </Border>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Center" Grid.Row="0" Grid.Column="1">
+                <Border Height="30" CornerRadius="0 12 0 0"
+Background="#FF008E43" 
+VerticalAlignment="Top"
+MouseDown="Border_MouseDown">
+                    <TextBlock Text="Журнал проекта" 
+       Foreground="White"
+       VerticalAlignment="Center"
+       Margin="10,0"/>
+                </Border>
+            </StackPanel>
+            <!-- Левая панель с кнопками функций -->
+            <StackPanel Grid.Column="0" Background="#F0F0F0" Margin="0,0,1,0" Grid.Row="1" Height="400" VerticalAlignment="Top">
+
+                <!-- Чек-лист -->
+                <Button x:Name="BtnChecklist" Width="40" Height="40" Margin="5" 
+Click="BtnChecklist_Click" ToolTip="Чек-лист">
+                    <TextBlock Text="☑" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
+                <!-- Автопроверки -->
+                <Button x:Name="BtnAutoCheck" Width="40" Height="40" Margin="5" 
+Click="BtnAutoCheck_Click" ToolTip="Автопроверки">
+                    <TextBlock Text="🗲" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
+                <!-- Журнал синхронизаций -->
+                <Button x:Name="BtnSyncJournal" Width="40" Height="40" Margin="5" 
+        Click="BtnSyncJournal_Click" ToolTip="Журнал синхронизаций">
+                    <TextBlock Text="📄" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
+                <!-- Задания -->
+                <Button x:Name="BtnTasks" Width="40" Height="40" Margin="5" 
+Click="BtnTasks_Click" ToolTip="Журнал заданий">
+                    <TextBlock Text="◩" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
+                
+
+
+            </StackPanel>
+            <!-- Центральная панель с контентом -->
+            <Border x:Name="FunctionBorder" Grid.Column="1" Grid.Row="1" BorderBrush="LightGray" BorderThickness="1" Padding="10" Margin="0,0,5,5" Background="White">
+                <ContentControl x:Name="FunctionContent"/>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

@@ -1,0 +1,43 @@
+\\fs-nova\Distr\0.For Admin\_TNov\build\config2\TNovCommon.dll
+\\fs-nova\Distr\0.For Admin\_TNov\build\config2\TNovCommon.pdb
+Z:\DEV\TNovCommon\obj\config2\TNovCommon.csproj.AssemblyReference.cache
+Z:\DEV\TNovCommon\obj\config2\TNovCommon.csproj.CoreCompileInputs.cache
+Z:\DEV\TNovCommon\obj\config2\TNovCommon.csproj.Up2Date
+Z:\DEV\TNovCommon\obj\config2\TNovCommon.dll
+Z:\DEV\TNovCommon\obj\config2\TNovCommon.pdb
+Z:\DEV\TNovCommon\obj\config2\AppVersion\AppVersionWPF.g.cs
+Z:\DEV\TNovCommon\obj\config2\Windows\TNovProgressBar.g.cs
+Z:\DEV\TNovCommon\obj\config2\Windows\InfoWindow280.g.cs
+Z:\DEV\TNovCommon\obj\config2\Windows\InfoWindow400.g.cs
+Z:\DEV\TNovCommon\obj\config2\Windows\InfoWindowTextField.g.cs
+Z:\DEV\TNovCommon\obj\config2\Windows\QuestionWindow280.g.cs
+Z:\DEV\TNovCommon\obj\config2\TNovCommon_MarkupCompile.cache
+Z:\DEV\TNovCommon\obj\config2\TNovCommon_MarkupCompile.lref
+Z:\DEV\TNovCommon\obj\config2\AppVersion\AppVersionWPF.baml
+Z:\DEV\TNovCommon\obj\config2\Windows\TNovProgressBar.baml
+Z:\DEV\TNovCommon\obj\config2\Windows\InfoWindow280.baml
+Z:\DEV\TNovCommon\obj\config2\Windows\InfoWindow400.baml
+Z:\DEV\TNovCommon\obj\config2\Windows\InfoWindowTextField.baml
+Z:\DEV\TNovCommon\obj\config2\Windows\QuestionWindow280.baml
+Z:\DEV\TNovCommon\obj\config2\TNovCommon.g.resources
+Z:\DEV\TNovCommon\obj\config2\Windows\ElementsTreeWindow.g.cs
+Z:\DEV\TNovCommon\obj\config2\GeneratedInternalTypeHelper.g.cs
+Z:\DEV\TNovCommon\obj\config2\Windows\ElementsTreeWindow.baml
+Z:\DEV\TNovCommon\obj\config2\Journal\AutoCheckControl.g.cs
+Z:\DEV\TNovCommon\obj\config2\Journal\SyncJournalControl.g.cs
+Z:\DEV\TNovCommon\obj\config2\Journal\ChecklistControl.g.cs
+Z:\DEV\TNovCommon\obj\config2\Journal\JournalWPF.g.cs
+Z:\DEV\TNovCommon\obj\config2\Journal\AutoCheckControl.baml
+Z:\DEV\TNovCommon\obj\config2\Journal\SyncJournalControl.baml
+Z:\DEV\TNovCommon\obj\config2\Journal\ChecklistControl.baml
+Z:\DEV\TNovCommon\obj\config2\Journal\JournalWPF.baml
+Z:\DEV\TNovCommon\obj\config2\ButtonStyles.baml
+Z:\DEV\TNovCommon\obj\config2\Journal\TasksControl.baml
+Z:\DEV\TNovCommon\obj\config2\Journal\TasksControl.g.cs
+\\fs-nova\Distr\0.For Admin\_TNov\build\config2\TNovCommon.dll.config
+Z:\DEV\TNovCommon\obj\config2\LoginWindow.baml
+Z:\DEV\TNovCommon\obj\config2\LoginWindow.g.cs
+Z:\DEV\TNovCommon\obj\config2\TextEditorWindow.g.cs
+Z:\DEV\TNovCommon\obj\config2\TextEditorWindow.baml
+Z:\DEV\TNovCommon\obj\config2\TNovCommon.Properties.Resources.resources
+Z:\DEV\TNovCommon\obj\config2\TNovCommon.csproj.GenerateResource.cache

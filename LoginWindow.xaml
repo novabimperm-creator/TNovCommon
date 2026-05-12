@@ -1,0 +1,43 @@
+﻿<Window x:Class="TNovCommon.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Вход в Active Directory" 
+        Height="200" Width="350"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        WindowStyle="ToolWindow"
+        ShowInTaskbar="False">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- UPN -->
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="UPN:" VerticalAlignment="Center" Margin="0,0,10,5"/>
+        <TextBox x:Name="UpnTextBox" Grid.Row="0" Grid.Column="1" Margin="0,0,0,5"/>
+
+        <!-- Пароль -->
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Пароль:" VerticalAlignment="Center" Margin="0,0,10,5"/>
+        <PasswordBox x:Name="PasswordBox" Grid.Row="1" Grid.Column="1" Margin="0,0,0,5"/>
+
+        <!-- Запомнить -->
+        <CheckBox x:Name="RememberCheckBox" Grid.Row="2" Grid.Column="1" Content="Запомнить учётные данные" Margin="0,5" IsChecked="True"/>
+
+        <!-- Кнопки -->
+        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="Войти" Click="OkButton_Click" Width="75" Margin="0,0,10,0" IsDefault="True"/>
+            <Button Content="Отмена" Click="CancelButton_Click" Width="75" IsCancel="True"/>
+        </StackPanel>
+
+        <!-- Сообщение об ошибке -->
+        <TextBlock x:Name="ErrorText" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Foreground="Red" TextWrapping="Wrap" Visibility="Collapsed"/>
+    </Grid>
+</Window>

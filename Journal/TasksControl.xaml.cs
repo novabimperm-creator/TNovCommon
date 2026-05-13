@@ -43,7 +43,7 @@ namespace TNovCommon
                 string userDepartment = "";
                 string userName = UserNameHelper.GetCurrentUserName(true);
                 UserNameTextBlock.Text = userName;
-                UserNamePrefixTextBlock.Text = "Ваше имя в Revit:";
+                UserNamePrefixTextBlock.Text = "Пользователь Revit:";
 
                 string[] rolesFile = File.ReadAllLines($"{config.ServerPath}roles.txt");
                 foreach (string role in rolesFile)

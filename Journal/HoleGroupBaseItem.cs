@@ -22,5 +22,6 @@ namespace TNovCommon
         public string STCheckDate { get; set; }
         public string STMisc { get; set; }
         public string MEPComments { get; set; }
+        public string MEPCommentsHistory { get; set; }
     }
 }

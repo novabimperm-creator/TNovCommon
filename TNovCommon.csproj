@@ -164,6 +164,9 @@
     <Compile Include="Journal\TasksControl.xaml.cs">
       <DependentUpon>TasksControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Journal\VersionHistoryWindow.xaml.cs">
+      <DependentUpon>VersionHistoryWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
@@ -244,6 +247,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Journal\TasksControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Journal\VersionHistoryWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

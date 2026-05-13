@@ -87,7 +87,15 @@ namespace TNovCommon
             HoleGrid.ItemsSource = _holeGroupsView;
         }
 
-        
+        private void VersionHistoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is HoleGroupBaseItem item)
+            {
+                var historyWindow = new VersionHistoryWindow(item);
+                historyWindow.Owner = Window.GetWindow(this);  // для модальности относительно основного окна
+                historyWindow.ShowDialog();
+            }
+        }
         private void ClearFiltersButton_Click(object sender, RoutedEventArgs e)
         {
             // Сбрасываем текстовые поля в комбинированных списках

@@ -41,3 +41,5 @@ Z:\DEV\TNovCommon\obj\config1\TextEditorWindow.g.cs
 Z:\DEV\TNovCommon\obj\config1\TextEditorWindow.baml
 Z:\DEV\TNovCommon\obj\config1\TNovCommon.Properties.Resources.resources
 Z:\DEV\TNovCommon\obj\config1\TNovCommon.csproj.GenerateResource.cache
+Z:\DEV\TNovCommon\obj\config1\Journal\VersionHistoryWindow.baml
+Z:\DEV\TNovCommon\obj\config1\Journal\VersionHistoryWindow.g.cs

@@ -77,7 +77,25 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="Версия" Binding="{Binding TaskVersion}"/>
+                    <DataGridTemplateColumn Header="Версия">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding TaskVersion}" VerticalAlignment="Center" Margin="5,0,5,0"/>
+                                    <Button Content="..." 
+    ToolTip="История версий"
+    Width="24" Height="20"
+    FontSize="12" 
+    Padding="0"
+    Background="Transparent" BorderThickness="0"
+    Cursor="Hand"
+    Click="VersionHistoryButton_Click"
+    Tag="{Binding}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Дата выдачи" Binding="{Binding TaskDate}" SortDirection="Descending"/>
                     <DataGridTextColumn Header="Дата выдачи" Binding="{Binding TaskDate}" SortDirection="Descending"/>
 
                     <DataGridTemplateColumn Header="Выдал">

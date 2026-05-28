@@ -163,5 +163,21 @@ namespace TNovCommon
                 }
             }
         }
+        public static void Log(string message)
+        {
+            string levelStr = "INFO";
+            lock (_lock)
+            {
+                try
+                {
+                    string logEntry = $"{DateTime.Now:HH:mm:ss} [{levelStr}] {message}";
+                    File.AppendAllText(_logFilePath, logEntry + Environment.NewLine);
+                }
+                catch
+                {
+                    // Обработка ошибок записи
+                }
+            }
+        }
     }
 }

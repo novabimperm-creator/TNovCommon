@@ -10,11 +10,11 @@ none
 false
 TRACE,config2
 
-15869331135
+16-1039430666
 
-611828995964
+62340334861
 46945664249
-AppVersion\AppVersionWPF.xaml;ButtonStyles.xaml;Journal\AutoCheckControl.xaml;Journal\SyncJournalControl.xaml;Journal\ChecklistControl.xaml;Journal\JournalWPF.xaml;Journal\TasksControl.xaml;LoginWindow.xaml;TextEditorWindow.xaml;Windows\ElementsTreeWindow.xaml;Windows\TNovProgressBar.xaml;Windows\InfoWindow280.xaml;Windows\InfoWindow400.xaml;Windows\InfoWindowTextField.xaml;Windows\QuestionWindow280.xaml;
+AppVersion\AppVersionWPF.xaml;ButtonStyles.xaml;Journal\AutoCheckControl.xaml;Journal\SyncJournalControl.xaml;Journal\ChecklistControl.xaml;Journal\JournalWPF.xaml;Journal\TasksControl.xaml;Journal\VersionHistoryWindow.xaml;LoginWindow.xaml;TextEditorWindow.xaml;Windows\ElementsTreeWindow.xaml;Windows\TNovProgressBar.xaml;Windows\InfoWindow280.xaml;Windows\InfoWindow400.xaml;Windows\InfoWindowTextField.xaml;Windows\QuestionWindow280.xaml;
 
 False
 

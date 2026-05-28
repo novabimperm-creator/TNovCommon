@@ -19,6 +19,16 @@ namespace TNovCommon
         {
             get => _extendedLogs; set { _extendedLogs = value; OnPropertyChanged(); }
         }
+        private bool _canPurge = false;
+        public bool canPurge
+        {
+            get => _canPurge; set { _canPurge = value; OnPropertyChanged(); }
+        }
+        private bool _canCreateParts = false;
+        public bool canCreateParts
+        {
+            get => _canCreateParts; set { _canCreateParts = value; OnPropertyChanged(); }
+        }
         [JsonIgnore] public string userName { get; set; }
         [JsonIgnore] public string userDep { get; set; }
         [JsonIgnore] public string userDepRole { get; set; }

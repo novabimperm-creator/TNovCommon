@@ -12,8 +12,9 @@ namespace TNovCommon
             UIDocument uidoc = RevitAPI.UiDocument;
             Document doc = RevitAPI.Document;
             UIApplication uiApp = RevitAPI.UiApplication;
-            Autodesk.Revit.ApplicationServices.Application rvtApp = uiApp.Application; 
-            string usagefilePath = nova.novaserver + "_TNov/usage.txt";
+            Autodesk.Revit.ApplicationServices.Application rvtApp = uiApp.Application;
+            TNovConfig config = TNovConfigLoad.LoadConfig();
+            string usagefilePath = config.ServerPath+ "usage.txt"; //05.26 - уход от конфигураций
             string docName = doc.Title.ToString(); docName = docName.Replace(",", " "); // --версия 1.0.2--
             string userName = rvtApp.Username; userName = userName.Replace(",", "");
             string docNameUserName = "_" + userName; docName = docName.Replace(docNameUserName, ""); // --версия 1.0.2--
@@ -28,8 +29,7 @@ namespace TNovCommon
             }
             catch (Exception)
             {
-                string info1txt = "Отсутствует подключение к корпоративной сети ПМ Новация. Проверьте подключение к адресу fs-nova.";
-                new InfoWindow280(info1txt).ShowDialog();
+                new InfoWindow280("Отсутствует подключение к корпоративной сети. Проверьте доступность сетевой папки или сетевого диска.").ShowDialog();
                 return false;
             }
         }

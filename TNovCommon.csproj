@@ -13,20 +13,12 @@
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'config1|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'R2022|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>\\fs-nova\Distr\0.For Admin\_TNov\build\config1\</OutputPath>
-    <DefineConstants>TRACE,config1</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'config2|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>\\fs-nova\Distr\0.For Admin\_TNov\build\config2\</OutputPath>
-    <DefineConstants>TRACE,config2</DefineConstants>
+    <OutputPath>\\fs-nova\Distr\0.For Admin\_TNov\build\2022\</OutputPath>
+    <DefineConstants>TRACE,R2022</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -191,7 +183,6 @@
     <Compile Include="Journal\Journal.cs" />
     <Compile Include="Json.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="nova.cs" />
     <Compile Include="Param.cs" />
     <Compile Include="ParamTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -299,6 +290,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>start /d "Z:\DEV\TNovDebug\bin\Release\net9.0" TNovDebug.exe</PostBuildEvent>
+    <PostBuildEvent>start /d "Z:\DEV\TNovDebug\bin\R2022\net9.0" TNovDebug.exe</PostBuildEvent>
   </PropertyGroup>
 </Project>

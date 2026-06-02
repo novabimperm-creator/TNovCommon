@@ -18,6 +18,11 @@ namespace TNovCommon
             UIApplication uiApp = RevitAPI.UiApplication; Autodesk.Revit.ApplicationServices.Application rvtApp = uiApp.Application;
             //Конфигурация
             TNovConfig config = TNovConfigLoad.LoadConfig(TNovClassName,TNovVersion); if(config==null) return Result.Failed;
+            if (config.LicenseType != "corp")
+            {
+                new InfoWindow280("Данный функционал доступен только при наличии Корпоративной лицензии!").ShowDialog();
+                return Result.Failed;
+            }
 
             string commandText = @"https://moodle.talan.group";
             var proc = new System.Diagnostics.Process();

@@ -1,0 +1,45 @@
+\\fs-nova\Distr\0.For Admin\_TNov\build\2022\TNovCommon.dll.config
+\\fs-nova\Distr\0.For Admin\_TNov\build\2022\TNovCommon.dll
+\\fs-nova\Distr\0.For Admin\_TNov\build\2022\TNovCommon.pdb
+Z:\DEV\TNovCommon\obj\R2022\TNovCommon.csproj.AssemblyReference.cache
+Z:\DEV\TNovCommon\obj\R2022\ButtonStyles.baml
+Z:\DEV\TNovCommon\obj\R2022\Journal\TasksControl.baml
+Z:\DEV\TNovCommon\obj\R2022\Journal\VersionHistoryWindow.baml
+Z:\DEV\TNovCommon\obj\R2022\LoginWindow.baml
+Z:\DEV\TNovCommon\obj\R2022\AppVersion\AppVersionWPF.g.cs
+Z:\DEV\TNovCommon\obj\R2022\Journal\AutoCheckControl.g.cs
+Z:\DEV\TNovCommon\obj\R2022\Journal\SyncJournalControl.g.cs
+Z:\DEV\TNovCommon\obj\R2022\Journal\ChecklistControl.g.cs
+Z:\DEV\TNovCommon\obj\R2022\Journal\JournalWPF.g.cs
+Z:\DEV\TNovCommon\obj\R2022\Journal\TasksControl.g.cs
+Z:\DEV\TNovCommon\obj\R2022\Journal\VersionHistoryWindow.g.cs
+Z:\DEV\TNovCommon\obj\R2022\LoginWindow.g.cs
+Z:\DEV\TNovCommon\obj\R2022\TextEditorWindow.g.cs
+Z:\DEV\TNovCommon\obj\R2022\Windows\ElementsTreeWindow.g.cs
+Z:\DEV\TNovCommon\obj\R2022\Windows\TNovProgressBar.g.cs
+Z:\DEV\TNovCommon\obj\R2022\Windows\InfoWindow280.g.cs
+Z:\DEV\TNovCommon\obj\R2022\Windows\InfoWindow400.g.cs
+Z:\DEV\TNovCommon\obj\R2022\Windows\InfoWindowTextField.g.cs
+Z:\DEV\TNovCommon\obj\R2022\Windows\QuestionWindow280.g.cs
+Z:\DEV\TNovCommon\obj\R2022\GeneratedInternalTypeHelper.g.cs
+Z:\DEV\TNovCommon\obj\R2022\TNovCommon_MarkupCompile.cache
+Z:\DEV\TNovCommon\obj\R2022\TNovCommon_MarkupCompile.lref
+Z:\DEV\TNovCommon\obj\R2022\AppVersion\AppVersionWPF.baml
+Z:\DEV\TNovCommon\obj\R2022\Journal\AutoCheckControl.baml
+Z:\DEV\TNovCommon\obj\R2022\Journal\SyncJournalControl.baml
+Z:\DEV\TNovCommon\obj\R2022\Journal\ChecklistControl.baml
+Z:\DEV\TNovCommon\obj\R2022\Journal\JournalWPF.baml
+Z:\DEV\TNovCommon\obj\R2022\TextEditorWindow.baml
+Z:\DEV\TNovCommon\obj\R2022\Windows\ElementsTreeWindow.baml
+Z:\DEV\TNovCommon\obj\R2022\Windows\TNovProgressBar.baml
+Z:\DEV\TNovCommon\obj\R2022\Windows\InfoWindow280.baml
+Z:\DEV\TNovCommon\obj\R2022\Windows\InfoWindow400.baml
+Z:\DEV\TNovCommon\obj\R2022\Windows\InfoWindowTextField.baml
+Z:\DEV\TNovCommon\obj\R2022\Windows\QuestionWindow280.baml
+Z:\DEV\TNovCommon\obj\R2022\TNovCommon.g.resources
+Z:\DEV\TNovCommon\obj\R2022\TNovCommon.Properties.Resources.resources
+Z:\DEV\TNovCommon\obj\R2022\TNovCommon.csproj.GenerateResource.cache
+Z:\DEV\TNovCommon\obj\R2022\TNovCommon.csproj.CoreCompileInputs.cache
+Z:\DEV\TNovCommon\obj\R2022\TNovCommon.csproj.Up2Date
+Z:\DEV\TNovCommon\obj\R2022\TNovCommon.dll
+Z:\DEV\TNovCommon\obj\R2022\TNovCommon.pdb

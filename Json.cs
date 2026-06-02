@@ -19,6 +19,8 @@ namespace TNovCommon
             string date = dateTime.ToString(); date = date.Replace(":", "-"); date = date.Replace("/", "-"); date = date.Replace(" 0-00-00", "");
             string TNovVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             TNovConfig config = TNovConfigLoad.LoadConfig();
+            if (!Directory.Exists($"{config.ServerPath}users/")) Directory.CreateDirectory($"{config.ServerPath}users/");
+            if (!Directory.Exists($"{config.ServerPath}projects/")) Directory.CreateDirectory($"{config.ServerPath}projects/");
             jsonpath = $"{config.ServerPath}users/" + userName + "," + date + "," + TNovclassname + ".json";
             if (forProject) { jsonpath = config.ServerPath + "projects/" + docName + "," + TNovclassname + ".json"; }
 

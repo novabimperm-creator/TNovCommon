@@ -132,7 +132,8 @@ namespace TNovCommon
                 {
                     System.IO.File.AppendAllText(usagefilePath, "\n" + date + "," + userName + "," + docName + "," + className + "," + version);
                 }
-                catch (Exception e) { new InfoWindow280($"Ошибка добавлении записи о запуске: {e.Message}").ShowDialog(); }
+                catch (Exception e) { new InfoWindow280($"Ошибка добавлении записи о запуске: {e.Message}. " +
+                    $"Рекомендуем проверить подключение к папке {config.ServerPath} и перезапустить плагин.").ShowDialog(); }
 
                 return config;
             }

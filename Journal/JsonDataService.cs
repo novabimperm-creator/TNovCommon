@@ -32,6 +32,8 @@ namespace TNovCommon
 
             TNovConfig config = TNovConfigLoad.LoadConfig();
 
+
+            if (!Directory.Exists($"{config.ServerPath}projects/")) Directory.CreateDirectory($"{config.ServerPath}projects/");
             string directory = Path.Combine($"{config.ServerPath}projects");
 
             

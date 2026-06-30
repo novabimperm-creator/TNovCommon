@@ -6,7 +6,6 @@ Z:\DEV\TNovCommon\obj\R2022\ButtonStyles.baml
 Z:\DEV\TNovCommon\obj\R2022\Journal\TasksControl.baml
 Z:\DEV\TNovCommon\obj\R2022\Journal\VersionHistoryWindow.baml
 Z:\DEV\TNovCommon\obj\R2022\LoginWindow.baml
-Z:\DEV\TNovCommon\obj\R2022\AppVersion\AppVersionWPF.g.cs
 Z:\DEV\TNovCommon\obj\R2022\Journal\AutoCheckControl.g.cs
 Z:\DEV\TNovCommon\obj\R2022\Journal\SyncJournalControl.g.cs
 Z:\DEV\TNovCommon\obj\R2022\Journal\ChecklistControl.g.cs
@@ -24,7 +23,6 @@ Z:\DEV\TNovCommon\obj\R2022\Windows\QuestionWindow280.g.cs
 Z:\DEV\TNovCommon\obj\R2022\GeneratedInternalTypeHelper.g.cs
 Z:\DEV\TNovCommon\obj\R2022\TNovCommon_MarkupCompile.cache
 Z:\DEV\TNovCommon\obj\R2022\TNovCommon_MarkupCompile.lref
-Z:\DEV\TNovCommon\obj\R2022\AppVersion\AppVersionWPF.baml
 Z:\DEV\TNovCommon\obj\R2022\Journal\AutoCheckControl.baml
 Z:\DEV\TNovCommon\obj\R2022\Journal\SyncJournalControl.baml
 Z:\DEV\TNovCommon\obj\R2022\Journal\ChecklistControl.baml
@@ -43,3 +41,6 @@ Z:\DEV\TNovCommon\obj\R2022\TNovCommon.csproj.CoreCompileInputs.cache
 Z:\DEV\TNovCommon\obj\R2022\TNovCommon.csproj.Up2Date
 Z:\DEV\TNovCommon\obj\R2022\TNovCommon.dll
 Z:\DEV\TNovCommon\obj\R2022\TNovCommon.pdb
+\\fs-nova\Distr\0.For Admin\_TNov\build\2022\runtimes\win-x86\native\WebView2Loader.dll
+\\fs-nova\Distr\0.For Admin\_TNov\build\2022\runtimes\win-x64\native\WebView2Loader.dll
+\\fs-nova\Distr\0.For Admin\_TNov\build\2022\runtimes\win-arm64\native\WebView2Loader.dll

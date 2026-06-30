@@ -90,9 +90,11 @@ namespace TNovCommon
         {
             string jsonpath0 = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "TNovClient/TNovSettings.json");
             var viewModel0 = new AppVersionViewModel();
-            viewModel0.extendedLogs = false;
+            
             try
             {
+                viewModel0 = JsonConvert.DeserializeObject<AppVersionViewModel>(File.ReadAllText(jsonpath0));
+                viewModel0.extendedLogs = false;
                 // Откл расширенные логи в настройках TNov
                 File.WriteAllText(jsonpath0, JsonConvert.SerializeObject(viewModel0));
                 /*

@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'R2022|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,6 +54,18 @@
       <HintPath>..\TNov\packages\Microsoft.Extensions.Logging.Abstractions.8.0.0\lib\net462\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.3967.48, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\TNov\packages\Microsoft.Web.WebView2.1.0.3967.48\lib\net462\Microsoft.Web.WebView2.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.3967.48, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\TNov\packages\Microsoft.Web.WebView2.1.0.3967.48\lib\net462\Microsoft.Web.WebView2.WinForms.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.Wpf, Version=1.0.3967.48, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\TNov\packages\Microsoft.Web.WebView2.1.0.3967.48\lib\net462\Microsoft.Web.WebView2.Wpf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\TNov\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -120,11 +134,7 @@
   <ItemGroup>
     <Compile Include="ActiveDirectoryAuthProvider.cs" />
     <Compile Include="AlphanumComparatorFastString.cs" />
-    <Compile Include="AppVersion\AppVersion.cs" />
-    <Compile Include="AppVersion\AppVersionViewModel.cs" />
-    <Compile Include="AppVersion\AppVersionWPF.xaml.cs">
-      <DependentUpon>AppVersionWPF.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="AppVersionViewModel.cs" />
     <Compile Include="AssemblyLoader.cs" />
     <Compile Include="AuthenticationService.cs" />
     <Compile Include="BoundingBoxXYZExtensions.cs" />
@@ -213,10 +223,6 @@
     <Compile Include="WorkOrg.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="AppVersion\AppVersionWPF.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="ButtonStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -288,8 +294,16 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>start /d "Z:\DEV\TNovDebug\bin\R2022\net9.0" TNovDebug.exe</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\TNov\packages\Microsoft.Web.WebView2.1.0.3967.48\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\TNov\packages\Microsoft.Web.WebView2.1.0.3967.48\build\Microsoft.Web.WebView2.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\TNov\packages\Microsoft.Web.WebView2.1.0.3967.48\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\TNov\packages\Microsoft.Web.WebView2.1.0.3967.48\build\Microsoft.Web.WebView2.targets'))" />
+  </Target>
 </Project>

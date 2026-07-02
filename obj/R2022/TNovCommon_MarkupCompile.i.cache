@@ -8,13 +8,13 @@ Z:\DEV\TNovCommon\obj\R2022\
 TNovCommon
 none
 false
-TRACE,R2022
+;TRACE;R2022;REVIT2022;TRACE;R2022;NETFRAMEWORK;NET48;NET30_OR_GREATER;NET35_OR_GREATER;NET40_OR_GREATER;NET45_OR_GREATER;NET451_OR_GREATER;NET452_OR_GREATER;NET46_OR_GREATER;NET461_OR_GREATER;NET462_OR_GREATER;NET47_OR_GREATER;NET471_OR_GREATER;NET472_OR_GREATER;NET48_OR_GREATER
 
-15-669757181
-3-29307533
-60813428987
-49-2108950083
-ButtonStyles.xaml;Journal\AutoCheckControl.xaml;Journal\SyncJournalControl.xaml;Journal\ChecklistControl.xaml;Journal\JournalWPF.xaml;Journal\TasksControl.xaml;Journal\VersionHistoryWindow.xaml;LoginWindow.xaml;TextEditorWindow.xaml;Windows\ElementsTreeWindow.xaml;Windows\TNovProgressBar.xaml;Windows\InfoWindow280.xaml;Windows\InfoWindow400.xaml;Windows\InfoWindowTextField.xaml;Windows\QuestionWindow280.xaml;
+151567355395
+1-1597931942
+61-96790749
+58-453517318
+ButtonStyles.xaml;Journal\AutoCheckControl.xaml;Journal\ChecklistControl.xaml;Journal\JournalWPF.xaml;Journal\SyncJournalControl.xaml;Journal\TasksControl.xaml;Journal\VersionHistoryWindow.xaml;LoginWindow.xaml;TextEditorWindow.xaml;Windows\ElementsTreeWindow.xaml;Windows\InfoWindow280.xaml;Windows\InfoWindow400.xaml;Windows\InfoWindowTextField.xaml;Windows\QuestionWindow280.xaml;Windows\TNovProgressBar.xaml;
 
-False
+True
 

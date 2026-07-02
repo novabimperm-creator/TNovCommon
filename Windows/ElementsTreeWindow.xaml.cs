@@ -106,11 +106,17 @@ namespace TNovCommon
                             var elementIds = typePair.Value;
 
                             // Сортируем ID по возрастанию (как числа)
+#if R2022
                             foreach (var id in elementIds.OrderBy(id => id.IntegerValue))
                             {
                                 typeNode.Children.Add(new ElementNode(id));
                             }
-
+#else
+                            foreach (var id in elementIds.OrderBy(id => id.Value))
+                            {
+                                typeNode.Children.Add(new ElementNode(id));
+                            }
+#endif
                             famNode.Children.Add(typeNode);
                         }
 

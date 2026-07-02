@@ -128,7 +128,13 @@ namespace TNovCommon
                         {
                             if (elem.Pinned == false)
                             {
-                                countElems++; countGrids++; gridNames.Add(elem.Name); gridIds.Add(elem.Id.IntegerValue.ToString());
+                                countElems++; countGrids++; gridNames.Add(elem.Name);
+#if R2022
+                                string idstr = elem.Id.IntegerValue.ToString();
+#else
+                                string idstr = elem.Id.Value.ToString();
+#endif
+                                gridIds.Add(idstr);
                             }
                         }
                     }
@@ -146,7 +152,13 @@ namespace TNovCommon
                         {
                             if (elem.Pinned == false)
                             {
-                                countElems++; countLevels++; levelNames.Add(elem.Name); levelIds.Add(elem.Id.IntegerValue.ToString());
+                                countElems++; countLevels++; levelNames.Add(elem.Name);
+#if R2022
+                                string idstr = elem.Id.IntegerValue.ToString();
+#else
+                                string idstr = elem.Id.Value.ToString();
+#endif
+                                levelIds.Add(idstr);
                             }
                         }
                     }
@@ -164,7 +176,13 @@ namespace TNovCommon
                         {
                             if (elem.Pinned == false)
                             {
-                                countElems++; countLinks++; linkNames.Add(elem.Name); linkIds.Add(elem.Id.IntegerValue.ToString());
+                                countElems++; countLinks++; linkNames.Add(elem.Name);
+#if R2022
+                                string idstr = elem.Id.IntegerValue.ToString();
+#else
+                                string idstr = elem.Id.Value.ToString();
+#endif
+                                linkIds.Add(idstr);
                             }
                         }
                     }
@@ -200,7 +218,13 @@ namespace TNovCommon
                             if(workset.Contains("сетки")||workset.Contains("Оси") || workset.Contains("оси")) { }
                             else
                             {
-                                countElems++; countGrids1++; gridNames1.Add(elem.Name); gridIds1.Add(elem.Id.IntegerValue.ToString());
+                                countElems++; countGrids1++; gridNames1.Add(elem.Name);
+#if R2022
+                                string idstr = elem.Id.IntegerValue.ToString();
+#else
+                                string idstr = elem.Id.Value.ToString();
+#endif
+                                gridIds1.Add(idstr);
                             }
                         }
                         if (countGrids1 > 0)
@@ -216,7 +240,13 @@ namespace TNovCommon
                             if (workset.Contains("слои") || workset.Contains("Уровни") || workset.Contains("уровни")) { }
                             else
                             {
-                                countElems++; countLevels1++; levelNames1.Add(elem.Name); levelIds1.Add(elem.Id.IntegerValue.ToString());
+                                countElems++; countLevels1++; levelNames1.Add(elem.Name);
+#if R2022
+                                string idstr = elem.Id.IntegerValue.ToString();
+#else
+                                string idstr = elem.Id.Value.ToString();
+#endif
+                                levelIds1.Add(idstr);
                             }
                         }
                         if (countLevels1 > 0)
@@ -261,7 +291,13 @@ namespace TNovCommon
 
                             if(checkedW==false||checkedTypeW==false)
                             {
-                                countElems++; countLinks1++; linkNames1.Add(lname); linkIds1.Add(link.Id.IntegerValue.ToString());
+                                countElems++; countLinks1++; linkNames1.Add(lname);
+#if R2022
+                                string idstr = link.Id.IntegerValue.ToString();
+#else
+                                string idstr = link.Id.Value.ToString();
+#endif
+                                linkIds1.Add(idstr);
                             }
                         }
                         if (countLinks1 > 0)

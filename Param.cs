@@ -42,7 +42,12 @@ namespace TNovCommon
             else
             {
                 ElementId typeId = elem.GetTypeId();
-                if (typeId != null && typeId.IntegerValue != -1)
+#if R2022
+                long idv = typeId.IntegerValue;
+#else
+                long idv = typeId.Value;
+#endif
+                if (typeId != null && idv != -1)
                 {
                     Element type = doc.GetElement(typeId);
                     if (ParamExistByGuid(pGuid, type))
@@ -64,7 +69,12 @@ namespace TNovCommon
             else
             {
                 ElementId typeId = elem.GetTypeId();
-                if (typeId != null && typeId.IntegerValue != -1)
+#if R2022
+                long idv = typeId.IntegerValue;
+#else
+                long idv = typeId.Value;
+#endif
+                if (typeId != null && idv != -1)
                 {
                     Element type = doc.GetElement(typeId);
                     if (ParamExistByGuid(pGuid, type))
@@ -83,7 +93,12 @@ namespace TNovCommon
             else
             {
                 ElementId typeId = elem.GetTypeId();
-                if (typeId != null && typeId.IntegerValue != -1)
+#if R2022
+                long idv = typeId.IntegerValue;
+#else
+                long idv = typeId.Value;
+#endif
+                if (typeId != null && idv != -1)
                 {
                     Element type = doc.GetElement(typeId);
                     param = type.get_Parameter(builtInParameter);
@@ -102,7 +117,12 @@ namespace TNovCommon
             else
             {
                 ElementId typeId = elem.GetTypeId();
-                if (typeId != null && typeId.IntegerValue != -1)
+#if R2022
+                long idv = typeId.IntegerValue;
+#else
+                long idv = typeId.Value;
+#endif
+                if (typeId != null && idv != -1)
                 {
                     Element type = doc.GetElement(typeId);
                     if (ParamExist(pName, type))

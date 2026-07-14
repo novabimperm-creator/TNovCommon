@@ -27,10 +27,10 @@ namespace TNovCommon
         // а IsCancel="True" уже обрабатывает Escape.
         // private void escButton_Click(object sender, RoutedEventArgs e) { ... }
 
-        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
+        private void TitleBar_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed)
-                this.DragMove(); // Позволяет перетаскивать окно за заголовок
+            if (e.ChangedButton == MouseButton.Left)
+                DragMove();
         }
 
         private async void copyButton_Click(object sender, RoutedEventArgs e)

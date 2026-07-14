@@ -112,3 +112,4 @@ Z:\DEV\_build-test\2027\System.Resources.Extensions.dll
 \\fs-nova\NOVA\DEV\TNovCommon\obj\R2027\refint\TNovCommon.dll
 \\fs-nova\NOVA\DEV\TNovCommon\obj\R2027\TNovCommon.pdb
 \\fs-nova\NOVA\DEV\TNovCommon\obj\R2027\ref\TNovCommon.dll
+Z:\DEV\TNovCommon\obj\R2027\Styles.baml

@@ -4,82 +4,104 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:TNovCommon"
-        MaxHeight="140" MaxWidth="400" MinHeight="80" MinWidth="400"
-        WindowStartupLocation="CenterScreen" 
-        AllowsTransparency="True" Background="Transparent" 
-        ResizeMode="NoResize" WindowStyle="None" Topmost="true">
-
+        MaxHeight="160"
+        MaxWidth="440"
+        MinHeight="120"
+        MinWidth="400"
+        Width="420"
+        WindowStartupLocation="CenterScreen"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        Topmost="True">
 
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../ButtonStyles.xaml"/>
+                <ResourceDictionary Source="../Styles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
+
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="30"
                       ResizeBorderThickness="5"
                       GlassFrameThickness="0"
                       CornerRadius="12"/>
     </WindowChrome.WindowChrome>
+
     <Border CornerRadius="12"
-Background="White"
-BorderBrush="#FF008E43"
-BorderThickness="1">
-        <Grid>
+            Background="{StaticResource BgBrush}"
+            BorderBrush="{StaticResource AccentBrush}"
+            BorderThickness="1">
+        <Grid Margin="12">
             <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Заголовок окна -->
             <Border Grid.Row="0"
-                Height="30" CornerRadius="12 12 0 0"
-                Background="#FF008E43" 
-                MouseDown="Border_MouseDown">
-                <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource RoundButtonStyle}" 
-Content="✕" Click="closeButton_Click"
-HorizontalAlignment="Center" VerticalAlignment="Center"
-Width="20" Height="20" Margin="5,0"
-WindowChrome.IsHitTestVisibleInChrome="True"/>
-                    <Button Style="{StaticResource RoundButtonStyle3}" 
-HorizontalAlignment="Center" VerticalAlignment="Center"
-Width="20" Height="20" Margin="0"
-WindowChrome.IsHitTestVisibleInChrome="True"/>
-                    <TextBlock Text="Обработка элементов" 
-Foreground="White"
-VerticalAlignment="Center"
-Margin="10,0"/>
-                </StackPanel>
+                    MouseDown="TitleBar_MouseDown"
+                    Background="Transparent"
+                    Cursor="Arrow"
+                    Margin="6,6,6,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="35"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="ОБРАБОТКА"
+                               Grid.Column="0"
+                               Foreground="{StaticResource AccentBrush}"
+                               FontSize="16"
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"/>
+                    <Button Content="✕"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{StaticResource CloseButtonStyleMini}"
+                            Click="closeButton_Click"
+                            WindowChrome.IsHitTestVisibleInChrome="True"/>
+                </Grid>
             </Border>
 
-            <!-- Строка с информацией -->
-            <StackPanel Grid.Row="1" 
-                    Orientation="Horizontal" 
-                    HorizontalAlignment="Center" 
-                    VerticalAlignment="Center">
-                <TextBlock Name="info" x:FieldModifier="public" />
-            </StackPanel>
+            <TextBlock Grid.Row="1"
+                       Name="info"
+                       x:FieldModifier="public"
+                       Foreground="{StaticResource MutedBrush}"
+                       FontSize="12"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"
+                       Margin="0,0,0,10"/>
 
-            <!-- Прогресс-бар и счётчик -->
-            <ProgressBar Grid.Row="2" 
-                     Name="TNov_ProgressBar" 
-                     x:FieldModifier="public"
-                     Margin="12.5 5 12.5 12.5" 
-                     Value="0" 
-                     BorderBrush="#CCCCCC"/>
-
-            <StackPanel Grid.Row="2" Margin="12.5 5 12.5 12.5" 
-                    Orientation="Horizontal" 
-                    HorizontalAlignment="Center" 
-                    VerticalAlignment="Center">
-                <TextBlock Name="value" x:FieldModifier="public" Margin="5,0"/>
-                <TextBlock Text="/" Margin="5,0"/>
-                <TextBlock Name="maxvalue" x:FieldModifier="public" Margin="5,0"/>
-            </StackPanel>
+            <Grid Grid.Row="2"
+                  Height="28"
+                  Margin="0,0,0,8">
+                <ProgressBar Name="TNov_ProgressBar"
+                             x:FieldModifier="public"
+                             Style="{StaticResource DarkProgressBarStyle}"
+                             Height="28"
+                             VerticalAlignment="Center"
+                             HorizontalAlignment="Stretch"
+                             Value="0"/>
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Height="28"
+                            IsHitTestVisible="False">
+                    <TextBlock Name="value"
+                               x:FieldModifier="public"
+                               Style="{StaticResource DarkProgressBarLabelStyle}"/>
+                    <TextBlock Text="/"
+                               Style="{StaticResource DarkProgressBarLabelStyle}"
+                               Margin="4,0"/>
+                    <TextBlock Name="maxvalue"
+                               x:FieldModifier="public"
+                               Style="{StaticResource DarkProgressBarLabelStyle}"/>
+                </StackPanel>
+            </Grid>
         </Grid>
     </Border>
 </Window>

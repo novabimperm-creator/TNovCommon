@@ -2,94 +2,140 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:TNovCommon"
-        Title="Необработанные элементы" Height="450" Width="400"
+        Title="Необработанные элементы"
+        Height="500"
+        Width="460"
         WindowStartupLocation="CenterScreen"
-                AllowsTransparency="True"
-Background="Transparent" 
-ResizeMode="NoResize" WindowStyle="None">
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="CanResize"
+        MinHeight="400"
+        MinWidth="400"
+        WindowStyle="None">
+
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../ButtonStyles.xaml"/>
+                <ResourceDictionary Source="../Styles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <local:InverseConverter x:Key="InverseConverter"/>
         </ResourceDictionary>
     </Window.Resources>
+
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="30"
-          ResizeBorderThickness="5"
-          GlassFrameThickness="0"
-          CornerRadius="12"/>
+                      ResizeBorderThickness="5"
+                      GlassFrameThickness="0"
+                      CornerRadius="12"/>
     </WindowChrome.WindowChrome>
+
     <Border CornerRadius="12"
-    Background="White"
-    BorderBrush="#FF008E43"
-    BorderThickness="1">
-        <Grid >
+            Background="{StaticResource BgBrush}"
+            BorderBrush="{StaticResource AccentBrush}"
+            BorderThickness="1">
+        <Grid Margin="12">
             <Grid.RowDefinitions>
-                <RowDefinition Height="30 px"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <StackPanel VerticalAlignment="Center"  Grid.Row="0"  >
-                <Border Height="30" CornerRadius="12 12 0 0"
-    Background="#FF008E43" 
-    VerticalAlignment="Top"
-    MouseDown="Border_MouseDown">
-                    <StackPanel Orientation="Horizontal">
-                        <Button Style="{StaticResource RoundButtonStyle}" 
-Command="{Binding CloseCommand}" Content="✕"
-HorizontalAlignment="Center" VerticalAlignment="Center"
-Width="20" Height="20" Margin="5,0"
-WindowChrome.IsHitTestVisibleInChrome="True"/>
-                        <Button Style="{StaticResource RoundButtonStyle3}" 
-HorizontalAlignment="Center" VerticalAlignment="Center"
-Width="20" Height="20" Margin="0"
-WindowChrome.IsHitTestVisibleInChrome="True"/>
-                        <TextBlock Text="Данные элементы не были обработаны:" 
-Foreground="White"
-VerticalAlignment="Center"
-Margin="10,0"/>
-                    </StackPanel>
-                    
-                </Border>
-            </StackPanel>
 
-            <TreeView Grid.Row="1" ItemsSource="{Binding Categories}" Margin="10 10 10 0">
-                <TreeView.Resources>
-                    <HierarchicalDataTemplate DataType="{x:Type local:CategoryNode}" ItemsSource="{Binding Children}">
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding IsChecked}" Margin="2"/>
-                            <TextBlock Text="{Binding CategoryName}" Margin="2"/>
-                        </StackPanel>
-                    </HierarchicalDataTemplate>
-                    <HierarchicalDataTemplate DataType="{x:Type local:FamilyNode}" ItemsSource="{Binding Children}">
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding IsChecked}" Margin="2"/>
-                            <TextBlock Text="{Binding FamilyName}" Margin="2"/>
-                        </StackPanel>
-                    </HierarchicalDataTemplate>
-                    <HierarchicalDataTemplate DataType="{x:Type local:TypeNode}" ItemsSource="{Binding Children}">
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding IsChecked}" Margin="2"/>
-                            <TextBlock Text="{Binding TypeName}" Margin="2"/>
-                        </StackPanel>
-                    </HierarchicalDataTemplate>
-                    <DataTemplate DataType="{x:Type local:ElementNode}">
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding IsChecked}" Margin="2"/>
-                            <TextBlock Text="{Binding Id}" Margin="2"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </TreeView.Resources>
-            </TreeView>
+            <Border Grid.Row="0"
+                    MouseDown="TitleBar_MouseDown"
+                    Background="Transparent"
+                    Cursor="Arrow"
+                    Margin="6,6,6,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="35"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="НЕОБРАБОТАННЫЕ ЭЛЕМЕНТЫ"
+                               Grid.Column="0"
+                               Foreground="{StaticResource AccentBrush}"
+                               FontSize="15"
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"
+                               TextWrapping="Wrap"/>
+                    <Button Content="✕"
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Style="{StaticResource CloseButtonStyleMini}"
+                            Command="{Binding CloseCommand}"
+                            WindowChrome.IsHitTestVisibleInChrome="True"/>
+                </Grid>
+            </Border>
 
-            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,10,10">
-                <Button Style="{StaticResource CustomButtonStyle}" Content="Открыть логи" Click="Button_Click" MinHeight="25" Width="100" Margin="5 5 30 5"/>
-                <Button Style="{StaticResource CustomButtonStyle}" Content="Выбрать" Command="{Binding SelectCommand}" MinHeight="25" Width="100" Margin="5"/>
-                <Button Style="{StaticResource CustomButtonStyle}" Content="Завершить" Command="{Binding CloseCommand}" MinHeight="25" Width="100" Margin="5"/>
+            <Border Grid.Row="1"
+                    Style="{StaticResource PanelFrameStyle}"
+                    Margin="0,0,0,10"
+                    Padding="8">
+                <TreeView ItemsSource="{Binding Categories}"
+                          Style="{StaticResource DarkTreeViewStyle}"
+                          ItemContainerStyle="{StaticResource DarkTreeViewItemStyle}">
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type local:CategoryNode}"
+                                                  ItemsSource="{Binding Children}">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding IsChecked}"
+                                          Style="{StaticResource DarkCheckBoxStyle}"
+                                          Margin="0,0,6,0"/>
+                                <TextBlock Text="{Binding CategoryName}"
+                                           Foreground="White"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type local:FamilyNode}"
+                                                  ItemsSource="{Binding Children}">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding IsChecked}"
+                                          Style="{StaticResource DarkCheckBoxStyle}"
+                                          Margin="0,0,6,0"/>
+                                <TextBlock Text="{Binding FamilyName}"
+                                           Foreground="White"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type local:TypeNode}"
+                                                  ItemsSource="{Binding Children}">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding IsChecked}"
+                                          Style="{StaticResource DarkCheckBoxStyle}"
+                                          Margin="0,0,6,0"/>
+                                <TextBlock Text="{Binding TypeName}"
+                                           Foreground="White"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                        <DataTemplate DataType="{x:Type local:ElementNode}">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding IsChecked}"
+                                          Style="{StaticResource DarkCheckBoxStyle}"
+                                          Margin="0,0,6,0"/>
+                                <TextBlock Text="{Binding Id}"
+                                           Foreground="{StaticResource MutedBrush}"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </TreeView.Resources>
+                </TreeView>
+            </Border>
+
+            <StackPanel Grid.Row="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+                <Button Style="{StaticResource SecondaryButtonStyle}"
+                        Content="Открыть логи"
+                        Click="Button_Click"
+                        Margin="0,0,8,0"/>
+                <Button Style="{StaticResource RunButtonStyle}"
+                        Content="Выбрать"
+                        Command="{Binding SelectCommand}"
+                        Margin="0,0,8,0"/>
+                <Button Style="{StaticResource CloseButtonStyle}"
+                        Content="Завершить"
+                        Command="{Binding CloseCommand}"/>
             </StackPanel>
         </Grid>
-
     </Border>
-    </Window>
+</Window>

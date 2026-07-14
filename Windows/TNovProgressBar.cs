@@ -20,9 +20,10 @@ namespace TNovCommon
         { 
             this.InitializeComponent(); 
         }
-        private void Border_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void TitleBar_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-
+            if (e.ChangedButton == System.Windows.Input.MouseButton.Left)
+                DragMove();
         }
         private void acceptButton_Click(object sender, RoutedEventArgs e)
         {

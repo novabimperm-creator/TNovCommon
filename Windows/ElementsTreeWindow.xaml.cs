@@ -290,9 +290,10 @@ namespace TNovCommon
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
+        private void TitleBar_MouseDown(object sender, MouseButtonEventArgs e)
         {
-
+            if (e.ChangedButton == MouseButton.Left)
+                DragMove();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

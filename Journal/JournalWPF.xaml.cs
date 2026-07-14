@@ -33,6 +33,7 @@ namespace TNovCommon
             _doc = uidoc.Document;
             var control = new ChecklistControl(_doc);
             FunctionContent.Content = control;
+            HighlightButton(BtnChecklist);
         }
 
         private void BtnChecklist_Click(object sender, RoutedEventArgs e)
@@ -41,6 +42,15 @@ namespace TNovCommon
             FunctionContent.Content = control;
             HighlightButton(BtnChecklist);
             SetStartMode();
+        }
+
+        private void SetStartMode()
+        {
+        }
+
+        public void SetOwner(System.IntPtr ownerHwnd)
+        {
+            new WindowInteropHelper(this).Owner = ownerHwnd;
         }
 
         private void BtnSyncJournal_Click(object sender, RoutedEventArgs e)
@@ -71,31 +81,22 @@ namespace TNovCommon
         private void HighlightButton(Button activeButton)
         {
             var buttons = new[] { BtnChecklist, BtnAutoCheck, BtnSyncJournal, BtnTasks };
+            var selectedBrush = (SolidColorBrush)FindResource("SelectedBrush");
 
             foreach (var btn in buttons)
             {
-                btn.ClearValue(Button.BackgroundProperty);
+                btn.Background = Brushes.Transparent;
                 btn.ClearValue(Button.BorderBrushProperty);
                 btn.ClearValue(Button.BorderThicknessProperty);
-                btn.ClearValue(Button.FontWeightProperty);
             }
 
-            activeButton.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(76, 175, 80));
-            activeButton.BorderThickness = new Thickness(0, 0, 0, 3);
+            activeButton.Background = selectedBrush;
         }
 
-        private void SetStartMode()
+        private void TitleBar_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            
-        }
-        public void SetOwner(System.IntPtr ownerHwnd)
-        {
-            new WindowInteropHelper(this).Owner = ownerHwnd;
-        }
-
-        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-
+            if (e.ChangedButton == MouseButton.Left)
+                DragMove();
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -106,7 +107,7 @@ namespace TNovCommon
 
         private void HelpButton_Click(object sender, RoutedEventArgs e)
         {
-            string commandText = @"https://portal.talan.group/knowledge/proektirovanie/reestrzamechaniy/";
+            string commandText = HelpLinks.GetHelpLink("Журнал проекта");
             var proc = new System.Diagnostics.Process();
             proc.StartInfo.FileName = commandText;
             proc.StartInfo.UseShellExecute = true;

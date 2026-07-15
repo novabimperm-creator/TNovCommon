@@ -83,7 +83,7 @@
                         IsCancel="True"
                         Click="escButton_Click"/>
                 <Button Grid.Column="2"
-                        Content="Да"
+                        Content="Да" Margin="0"
                         x:Name="acceptButton"
                         Style="{StaticResource RunButtonStyle}"
                         IsDefault="True"

@@ -103,6 +103,7 @@ namespace TNovCommon
             ModelComboBox.Text = string.Empty;
 
             // Очищаем поля фильтров в заголовках столбцов
+            ClearHeaderTextBox("FilterJsonFile");
             ClearHeaderTextBox("FilterHoleGroup");
             ClearHeaderTextBox("FilterInitiator");
             ClearHeaderTextBox("FilterSTStatus");
@@ -140,6 +141,7 @@ namespace TNovCommon
             }
 
             // Текстовые фильтры в заголовках
+            if (!PassTextFilter(GetFilterText("FilterJsonFile"), hole.JsonFileName)) return false;
             if (!PassTextFilter(GetFilterText("FilterHoleGroup"), hole.HoleGroupName)) return false;
             if (!PassTextFilter(GetFilterText("FilterInitiator"), hole.Initiator)) return false;
             if (!PassTextFilter(GetFilterText("FilterSTStatus"), hole.STStatus)) return false;
@@ -234,6 +236,7 @@ namespace TNovCommon
                     foreach (var item in existingItems)
                     {
                         item.ModelName = fileNameWithoutExtension;
+                        item.JsonFileName = fileNameWithoutExtension;
                         foreach (string p in projects)
                         {
                             if (fileNameWithoutExtension.Contains(p))

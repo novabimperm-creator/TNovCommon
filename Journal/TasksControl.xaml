@@ -100,6 +100,30 @@
                     </Style>
                 </DataGrid.RowStyle>
                 <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Имя файла">
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock Text="Имя файла"
+                                               Foreground="{StaticResource AccentBrush}"
+                                               FontWeight="SemiBold"/>
+                                    <TextBox x:Name="FilterJsonFile"
+                                             Width="180"
+                                             Style="{StaticResource DarkTextBoxStyle}"
+                                             Margin="0,4,0,0"
+                                             TextChanged="Filter_TextChanged"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding JsonFileName}"
+                                           Foreground="White"
+                                           VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
                     <DataGridTemplateColumn Header="Имя группы">
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>

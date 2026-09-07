@@ -10,6 +10,7 @@ namespace TNovCommon
     {
         public string ProjectName { get; set; }
         public string ModelName { get; set; }
+        public string JsonFileName { get; set; }
         public string HoleGroupName { get; set; }
         public string HoleGroupNamePart1 { get; set; }
         public string HoleGroupNamePart2 { get; set; }

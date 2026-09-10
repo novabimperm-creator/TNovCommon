@@ -27,7 +27,7 @@
                            FontSize="12"/>
                 <TextBlock x:Name="UserNameTextBlock"
                            Margin="5,0,0,0"
-                           Foreground="White"
+                           Foreground="{StaticResource PrimaryTextBrush}"
                            FontWeight="SemiBold"/>
                 <TextBlock x:Name="UserRolePrefixTextBlock"
                            Margin="12,0,0,0"
@@ -35,7 +35,7 @@
                            FontSize="12"/>
                 <TextBlock x:Name="UserRoleTextBlock"
                            Margin="5,0,0,0"
-                           Foreground="White"
+                           Foreground="{StaticResource PrimaryTextBrush}"
                            FontWeight="SemiBold"/>
             </StackPanel>
             <TextBlock Text="Журнал выдачи заданий"
@@ -118,7 +118,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding JsonFileName}"
-                                           Foreground="White"
+                                           Foreground="{StaticResource PrimaryTextBrush}"
                                            VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -142,7 +142,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding HoleGroupName}"
-                                           Foreground="White"
+                                           Foreground="{StaticResource PrimaryTextBrush}"
                                            VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -154,7 +154,7 @@
                                 <StackPanel Orientation="Horizontal"
                                             VerticalAlignment="Center">
                                     <TextBlock Text="{Binding TaskVersion}"
-                                               Foreground="White"
+                                               Foreground="{StaticResource PrimaryTextBrush}"
                                                VerticalAlignment="Center"
                                                Margin="5,0,5,0"/>
                                     <Button Content="..."
@@ -193,7 +193,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Initiator}"
-                                           Foreground="White"
+                                           Foreground="{StaticResource PrimaryTextBrush}"
                                            VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -221,7 +221,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding STStatus}"
-                                           Foreground="White"
+                                           Foreground="{StaticResource PrimaryTextBrush}"
                                            VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

@@ -81,7 +81,7 @@
                                           Style="{StaticResource DarkCheckBoxStyle}"
                                           Margin="0,0,6,0"/>
                                 <TextBlock Text="{Binding CategoryName}"
-                                           Foreground="White"
+                                           Foreground="{StaticResource PrimaryTextBrush}"
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                         </HierarchicalDataTemplate>
@@ -92,7 +92,7 @@
                                           Style="{StaticResource DarkCheckBoxStyle}"
                                           Margin="0,0,6,0"/>
                                 <TextBlock Text="{Binding FamilyName}"
-                                           Foreground="White"
+                                           Foreground="{StaticResource PrimaryTextBrush}"
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                         </HierarchicalDataTemplate>
@@ -103,7 +103,7 @@
                                           Style="{StaticResource DarkCheckBoxStyle}"
                                           Margin="0,0,6,0"/>
                                 <TextBlock Text="{Binding TypeName}"
-                                           Foreground="White"
+                                           Foreground="{StaticResource PrimaryTextBrush}"
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                         </HierarchicalDataTemplate>

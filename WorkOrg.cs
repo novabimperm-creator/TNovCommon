@@ -24,11 +24,7 @@ namespace TNovCommon
                 return Result.Failed;
             }
 
-            string commandText = @"https://portal.talan.group/knowledge/proektirovanie/";
-            var proc = new System.Diagnostics.Process();
-            proc.StartInfo.FileName = commandText;
-            proc.StartInfo.UseShellExecute = true;
-            proc.Start();
+            HelpLinks.ShowHelp("-");
 
             return Result.Succeeded;
         }

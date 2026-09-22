@@ -106,6 +106,17 @@ namespace TNovCommon
         }
         public static TNovConfig LoadConfig(string className, string version)
         {
+            // Автоконтекст справки. Поднимаем ДО основного try: его catch показывает
+            // пользователю «Ошибка при чтении файла конфигурации» и возвращает null,
+            // и любой сбой справки выглядел бы как отказ конфигурации.
+            try
+            {
+                string helpKey = Help.HelpContextMap.ResolveKey(className);
+                if (helpKey != null)
+                    Help.HelpPaneHost.SetSection(helpKey);
+            }
+            catch (Exception) { }
+
             string clientFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "TNovClient");
             string configPath = Path.Combine(clientFolderPath, "TNovConfig.json");
 

@@ -13,8 +13,10 @@ namespace TNovCommon
     {
         public static bool ParamExist(in string pName, Element elem)
         {
+            if (elem == null) return false;
             foreach (Parameter p in elem.ParametersMap)
             {
+                if (p == null || p.Definition == null) continue;
                 string paramName = p.Definition.Name;
                 if (paramName == pName) { return true; }
             }
@@ -22,9 +24,10 @@ namespace TNovCommon
         }
         public static bool ParamExistByGuid(in Guid pGuid, Element elem)
         {
+            if (elem == null) return false;
             foreach (Parameter p in elem.ParametersMap)
             {
-                if (p.IsShared)
+                if (p != null && p.IsShared)
                 {
                     Guid paramGuid = p.GUID;
                     if (paramGuid == pGuid) { return true; }
@@ -50,7 +53,7 @@ namespace TNovCommon
                 if (typeId != null && idv != -1)
                 {
                     Element type = doc.GetElement(typeId);
-                    if (ParamExistByGuid(pGuid, type))
+                    if (type != null && ParamExistByGuid(pGuid, type))
                     {
                         Parameter param = type.get_Parameter(pGuid);
                         if (param != null && param.HasValue) return param.AsDouble();
@@ -77,7 +80,7 @@ namespace TNovCommon
                 if (typeId != null && idv != -1)
                 {
                     Element type = doc.GetElement(typeId);
-                    if (ParamExistByGuid(pGuid, type))
+                    if (type != null && ParamExistByGuid(pGuid, type))
                     {
                         Parameter param = type.get_Parameter(pGuid);
                         if (param != null && param.HasValue) return param.AsString();
@@ -101,6 +104,7 @@ namespace TNovCommon
                 if (typeId != null && idv != -1)
                 {
                     Element type = doc.GetElement(typeId);
+                    if (type == null) return "";
                     param = type.get_Parameter(builtInParameter);
                     if (param != null && param.HasValue) return param.AsString();
                 }
@@ -125,7 +129,7 @@ namespace TNovCommon
                 if (typeId != null && idv != -1)
                 {
                     Element type = doc.GetElement(typeId);
-                    if (ParamExist(pName, type))
+                    if (type != null && ParamExist(pName, type))
                     {
                         Parameter param = type.LookupParameter(pName);
                         if (param != null && param.HasValue) return param.AsString();

@@ -74,7 +74,7 @@ namespace TNovCommon
                 catch (Exception e) { new InfoWindow280($"Ошибка при загрузке данных из базы: {e.Message}").ShowDialog(); }
 
                 viewModel.headtxt = $"Настройки";
-                viewModel.url = "https://portal.talan.group/knowledge/proektirovanie/plaginyiskriptynovatsiya/";
+                viewModel.url = HelpLinks.GetHelpLink("Плагины и скрипты");
                 viewModel.userName = userName; viewModel.userDep = userDepartment; viewModel.userDepRole = userDepRole;
                 var wpfview = new AppVersionWPF(viewModel);
                 viewModel.CloseRequest += (s, e) => wpfview.Close();

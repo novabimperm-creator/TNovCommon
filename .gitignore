@@ -1,2 +1,7 @@
 ﻿# MSBuild intermediate output
 obj/
+
+# Бандл справки: генерируется из вики (tools\Build-HelpBundle.ps1), не версионируется.
+# Это zip — git его не сжимает и не дедуплицирует, каждая правка вики
+# добавляла бы в историю ~1 МБ навсегда.
+Help/help.tnpack

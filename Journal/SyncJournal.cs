@@ -67,7 +67,7 @@ namespace TNovCommon
 
             _window = JournalWPF.ShowOwned(
                 "ЖУРНАЛ СИНХРОНИЗАЦИЙ",
-                "Журнал проекта",
+                "Журнал синхронизаций",
                 new SyncJournalControl(doc));
             _window.Closed += (s, e) => _window = null;
             return Result.Succeeded;

@@ -43,6 +43,30 @@
     <PackageReference Include="System.DirectoryServices.AccountManagement" Version="9.0.0" />
   </ItemGroup>
 
+  <!-- ===== Справка: бандл вшивается в сборку =====
+       help.tnpack собирается вручную скриптом TNov\tools\Build-HelpBundle.ps1
+       из вики плагина (нужна сеть, поэтому не на каждой сборке) и коммитится.
+       LogicalName задаём явно: глобы SDK .tnpack не подхватывают, а
+       EnableDefaultNoneItems=false в TNov.Build.props отключает дефолтные None. -->
+  <ItemGroup>
+    <EmbeddedResource Include="Help\help.tnpack" LogicalName="TNovCommon.Help.help.tnpack"
+                      Condition="Exists('Help\help.tnpack')" />
+  </ItemGroup>
+
+  <!-- Бандл не версионируется (см. .gitignore): собрать без него можно, но молча
+       это происходить не должно. Без бандла панель покажет подсказку, а кнопки "?"
+       уйдут в браузер — плагин работает, но справка внутри Revit будет пустой. -->
+  <Target Name="WarnIfNoHelpBundle" BeforeTargets="CoreCompile" Condition="!Exists('Help\help.tnpack')">
+    <Warning Text="Help\help.tnpack отсутствует — справка НЕ будет вшита. Запустите TNov\tools\Build-HelpBundle.ps1 (нужна сеть)." />
+  </Target>
+
+  <!-- ZipArchive для чтения бандла. На net48 System.IO.Compression в неявный
+       набор ссылок не входит (в TNov.Build.props перечислены только System,
+       System.Core, System.Data и т.п.); на .NET 10 приходит из runtime.
+       System.IO.Compression.FileSystem не нужен — он только для ZipFile. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <Reference Include="System.IO.Compression" />
+  </ItemGroup>
   <!-- ===== Версионирование ===== -->
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="powershell -ExecutionPolicy Bypass -File &quot;$(ProjectDir)UpdateVersion.ps1&quot;" />

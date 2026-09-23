@@ -19,8 +19,9 @@ namespace TNovCommon
             string date = dateTime.ToString(); date = date.Replace(":", "-"); date = date.Replace("/", "-"); date = date.Replace(" 0-00-00", "");
             string TNovVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             TNovConfig config = TNovConfigLoad.LoadConfig();
-            if (!Directory.Exists($"{config.ServerPath}users/")) Directory.CreateDirectory($"{config.ServerPath}users/");
-            if (!Directory.Exists($"{config.ServerPath}projects/")) Directory.CreateDirectory($"{config.ServerPath}projects/");
+            // Папки проверяем один раз за процесс: каждый Directory.Exists по сети — лишний round-trip.
+            Server.ServerDirectories.Ensure($"{config.ServerPath}users/");
+            Server.ServerDirectories.Ensure($"{config.ServerPath}projects/");
             jsonpath = $"{config.ServerPath}users/" + userName + "," + date + "," + TNovclassname + ".json";
             if (forProject) { jsonpath = config.ServerPath + "projects/" + docName + "," + TNovclassname + ".json"; }
 

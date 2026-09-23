@@ -45,7 +45,7 @@ namespace TNovCommon
                 UserNameTextBlock.Text = userName;
                 UserNamePrefixTextBlock.Text = "Пользователь Revit:";
 
-                string[] rolesFile = File.ReadAllLines($"{config.ServerPath}roles.txt");
+                string[] rolesFile = TNovCommon.Server.ServerData.ReadAllLines("roles.txt");
                 foreach (string role in rolesFile)
                 {
                     if (role.Contains(userName))
@@ -215,7 +215,7 @@ namespace TNovCommon
             string taskFolder = $"{config.ServerPath}tasks/";
             List<HoleGroupBaseItem> tasks = new List<HoleGroupBaseItem>();
 
-            string projectListFile = File.ReadAllText($"{config.ServerPath}CDE.txt");
+            string projectListFile = TNovCommon.Server.ServerData.ReadAllText("CDE.txt");
             string[] lines = projectListFile.Split('\n');
             List<string> projects = new List<string>();
             foreach (string line in lines)

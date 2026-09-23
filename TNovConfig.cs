@@ -87,16 +87,48 @@ namespace TNovCommon
     }
     public static class TNovConfigLoad
     {
-        public static TNovConfig LoadConfig() 
-        {
-            string clientFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "TNovClient");
-            string configPath = Path.Combine(clientFolderPath, "TNovConfig.json");
+        private static readonly object _cacheLock = new object();
+        private static TNovConfig _cached;
+        private static DateTime _cachedStampUtc;
+        private static bool _usageWarningShown;
 
+        private static string ConfigPath =>
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "TNovClient", "TNovConfig.json");
+
+        /// <summary>
+        /// Конфигурация из локального TNovConfig.json с кэшем в памяти: файл перечитывается,
+        /// только если изменилась дата записи (его переписывает TNovClient при смене офиса).
+        /// Бросает исключение, если файл не читается. Возвращает копию — вызывающий код может её менять.
+        /// </summary>
+        private static TNovConfig ReadConfig()
+        {
+            string path = ConfigPath;
+            DateTime stamp = File.GetLastWriteTimeUtc(path);
+            lock (_cacheLock)
+            {
+                if (_cached == null || stamp != _cachedStampUtc)
+                {
+                    TNovConfig config = JsonConvert.DeserializeObject<TNovConfig>(File.ReadAllText(path));
+                    if (config == null) throw new InvalidDataException($"Пустой файл конфигурации {path}");
+                    _cached = config;
+                    _cachedStampUtc = stamp;
+                }
+                return new TNovConfig { LicenseType = _cached.LicenseType, CorpName = _cached.CorpName, ServerPath = _cached.ServerPath };
+            }
+        }
+
+        /// <summary>Конфигурация без диалогов и без записи в usage (null, если не читается). Для фоновых задач.</summary>
+        public static TNovConfig GetCachedConfig()
+        {
+            try { return ReadConfig(); }
+            catch (Exception) { return null; }
+        }
+
+        public static TNovConfig LoadConfig()
+        {
             try
             {
-                string jsonContent = File.ReadAllText(configPath);
-                TNovConfig config = JsonConvert.DeserializeObject<TNovConfig>(jsonContent);
-                return config;
+                return ReadConfig();
             }
             catch (Exception ex)
             {
@@ -109,11 +141,11 @@ namespace TNovCommon
         {
             config = null;
             error = null;
-            string configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "TNovClient", "TNovConfig.json");
+            string configPath = ConfigPath;
             try
             {
-                config = JsonConvert.DeserializeObject<TNovConfig>(File.ReadAllText(configPath));
-                if (config == null || string.IsNullOrWhiteSpace(config.ServerPath))
+                config = ReadConfig();
+                if (string.IsNullOrWhiteSpace(config.ServerPath))
                 {
                     error = $"В {configPath} не задан ServerPath";
                     return false;
@@ -126,6 +158,26 @@ namespace TNovCommon
                 return false;
             }
         }
+
+        /// <summary>
+        /// Строка журнала запусков в формате usage.txt: «дата,пользователь,модель,команда,версия».
+        /// Запись уходит в <see cref="Server.ServerOutbox"/> и дописывается на сервер в фоне.
+        /// </summary>
+        public static void LogUsage(string className, string version)
+        {
+            Document doc = RevitAPI.Document;
+            UIApplication uiApp = RevitAPI.UiApplication;
+            Autodesk.Revit.ApplicationServices.Application rvtApp = uiApp.Application;
+            string docName = doc.Title.ToString(); docName = docName.Replace(",", " ");
+            string userName = rvtApp.Username; userName = userName.Replace(",", "");
+            string docNameUserName = "_" + userName; docName = docName.Replace(docNameUserName, "");
+            docName = docName.Replace(",", "");
+            DateTime dateTime = DateTime.Now;
+            string date = dateTime.ToString(); date = date.Replace(",", "");
+
+            Server.ServerOutbox.AppendLine("usage.txt", date + "," + userName + "," + docName + "," + className + "," + version);
+        }
+
         public static TNovConfig LoadConfig(string className, string version)
         {
             // Автоконтекст справки. Поднимаем ДО основного try: его catch показывает
@@ -139,42 +191,31 @@ namespace TNovCommon
             }
             catch (Exception) { }
 
-            string clientFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "TNovClient");
-            string configPath = Path.Combine(clientFolderPath, "TNovConfig.json");
-
+            TNovConfig config;
             try
             {
-                string jsonContent = File.ReadAllText(configPath);
-                TNovConfig config = JsonConvert.DeserializeObject<TNovConfig>(jsonContent);
-                 
-                //запись в файл usage (при любом типе лицензии)
-                
-                UIDocument uidoc = RevitAPI.UiDocument;
-                Document doc = RevitAPI.Document;
-                UIApplication uiApp = RevitAPI.UiApplication;
-                Autodesk.Revit.ApplicationServices.Application rvtApp = uiApp.Application;
-                string usagefilePath = config.ServerPath + "usage.txt"; //в перспективе - заменить таблицу usage на сайтовскую
-                string docName = doc.Title.ToString(); docName = docName.Replace(",", " "); 
-                string userName = rvtApp.Username; userName = userName.Replace(",", "");
-                string docNameUserName = "_" + userName; docName = docName.Replace(docNameUserName, ""); 
-                docName = docName.Replace(",", "");
-                DateTime dateTime = DateTime.Now;
-                string date = dateTime.ToString(); date = date.Replace(",", "");
-
-                try
-                {
-                    System.IO.File.AppendAllText(usagefilePath, "\n" + date + "," + userName + "," + docName + "," + className + "," + version);
-                }
-                catch (Exception e) { new InfoWindow280($"Ошибка добавлении записи о запуске: {e.Message}. " +
-                    $"Рекомендуем проверить подключение к папке {config.ServerPath} и перезапустить плагин.").ShowDialog(); }
-
-                return config;
+                config = ReadConfig();
             }
             catch (Exception ex)
             {
                 new InfoWindow280($"Ошибка при чтении файла конфигурации: {ex.Message}").ShowDialog();
                 return null;
             }
+
+            //запись в файл usage (при любом типе лицензии) — в фоне, см. ServerOutbox
+            try { LogUsage(className, version); } catch (Exception) { }
+
+            // Раньше пользователь сразу видел ошибку записи в usage. Теперь запись отложенная,
+            // поэтому предупреждаем один раз за сессию, если фоновая дозапись не проходит.
+            string outboxError = Server.ServerOutbox.LastError;
+            if (outboxError != null && !_usageWarningShown)
+            {
+                _usageWarningShown = true;
+                new InfoWindow280($"Ошибка добавлении записи о запуске: {outboxError}. " +
+                    $"Рекомендуем проверить подключение к папке {config.ServerPath} и перезапустить плагин.").ShowDialog();
+            }
+
+            return config;
         }
     }
 }

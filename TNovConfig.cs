@@ -104,6 +104,28 @@ namespace TNovCommon
                 return null;
             }
         }
+        /// <summary>Чтение конфигурации без диалогов — для пакетного режима (TNovAuto).</summary>
+        public static bool TryLoadConfig(out TNovConfig config, out string error)
+        {
+            config = null;
+            error = null;
+            string configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "TNovClient", "TNovConfig.json");
+            try
+            {
+                config = JsonConvert.DeserializeObject<TNovConfig>(File.ReadAllText(configPath));
+                if (config == null || string.IsNullOrWhiteSpace(config.ServerPath))
+                {
+                    error = $"В {configPath} не задан ServerPath";
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                error = $"Ошибка чтения {configPath}: {ex.Message}";
+                return false;
+            }
+        }
         public static TNovConfig LoadConfig(string className, string version)
         {
             // Автоконтекст справки. Поднимаем ДО основного try: его catch показывает

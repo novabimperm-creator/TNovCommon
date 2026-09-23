@@ -94,6 +94,7 @@ namespace TNovCommon
             new HelpTopic("Перенести", "p-c4e4f64a55e6", "Перенести"),
             new HelpTopic("Закрывашка", null, "Закрывашка"),
             new HelpTopic("Открывашка", null, "Открывашка"),
+            new HelpTopic("Отчет", null, "Отчет по чек-листам"),
 
             // ---- Помещения ----
             new HelpTopic("Помещения", "pomeshcheniya", "Помещения"),

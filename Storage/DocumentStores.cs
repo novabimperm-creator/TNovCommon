@@ -44,7 +44,9 @@ namespace TNovCommon.Storage
             {
                 if (_client == null || _clientSignature != signature)
                 {
-                    _client?.Dispose();
+                    // Прежний клиент не освобождаем: им ещё пользуются открытые окна (опрос,
+                    // сохранение) — Dispose дал бы им ObjectDisposedException. Смена адреса/ключа
+                    // бывает редко; клиент соберёт GC, когда окна закроются.
                     _client = new TNovApiClient(new TNovApiClientOptions
                     {
                         BaseAddress = new Uri(config.ApiUrl),

@@ -82,7 +82,8 @@ namespace TNovCommon
         [JsonIgnore]
         public string PhotoFullPath =>
             !string.IsNullOrEmpty(PhotoFileName) && !string.IsNullOrEmpty(_photosRootFolder)
-                ? Path.Combine(_photosRootFolder, Id.ToString(), PhotoFileName)
+                // Имя из JSON: небезопасное (с папками, «..», диском) — как будто фото нет.
+                ? Storage.SafePaths.PhotoPath(_photosRootFolder, Id, PhotoFileName)
                 : null;
 
         [JsonIgnore]

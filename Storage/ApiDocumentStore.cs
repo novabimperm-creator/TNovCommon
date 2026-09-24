@@ -39,7 +39,9 @@ namespace TNovCommon.Storage
             {
                 TNovDocument<JToken> doc = await _client.GetDocumentAsync<JToken>(kind, key, cancellationToken).ConfigureAwait(false);
                 StoredDocument result = doc == null ? StoredDocument.Missing(kind, key) : Convert(doc);
-                DocumentCache.Put(result);
+                // 404 может прийти и не от API (прокси, чужой сервис на адресе) — кэш с данными
+                // «документом нет» не затираем, иначе без связи окно показало бы пустоту.
+                DocumentCache.PutUnlessErasing(result);
                 return result;
             }
             catch (Exception ex) when (IsUnavailable(ex, cancellationToken))
@@ -65,8 +67,9 @@ namespace TNovCommon.Storage
                         return null;
                     case PollStatus.NotFound:
                         if (knownVersion == 0) return null;
+                        // Кэш с данными не затираем (см. LoadAsync).
                         StoredDocument missing = StoredDocument.Missing(kind, key);
-                        DocumentCache.Put(missing);
+                        DocumentCache.PutUnlessErasing(missing);
                         return missing;
                     default:
                         StoredDocument changed = Convert(poll.Document);
@@ -84,7 +87,7 @@ namespace TNovCommon.Storage
         {
             try
             {
-                JToken data = JToken.Parse(json);
+                JToken data = ParseVerbatim(json);
                 SaveResult<JToken> result = await _client.SaveDocumentAsync(kind, key, data,
                     expectedVersion == 0 ? (long?)null : expectedVersion, cancellationToken).ConfigureAwait(false);
 
@@ -129,13 +132,41 @@ namespace TNovCommon.Storage
             UpdatedBy = doc.UpdatedBy
         };
 
-        /// <summary>Сеть, таймаут, 5xx — «сервер недоступен». Отмена по токену и 4xx — ошибки вызывающего.</summary>
+        /// <summary>
+        /// JSON как есть: без превращения строк-дат в DateTime (JToken.Parse сохранил бы их
+        /// в другом формате и текст документа на сервере изменился бы).
+        /// </summary>
+        internal static JToken ParseVerbatim(string json)
+        {
+            using (var reader = new JsonTextReader(new StringReader(json)) { DateParseHandling = DateParseHandling.None })
+            {
+                JToken token = JToken.ReadFrom(reader);
+                while (reader.Read())
+                {
+                    if (reader.TokenType != JsonToken.Comment)
+                        throw new JsonReaderException("Лишние данные после конца JSON.");
+                }
+                return token;
+            }
+        }
+
+        /// <summary>
+        /// Сеть, таймаут, 5xx/408/429, освобождённый клиент (сменили адрес API) — «сервер недоступен».
+        /// Отмена по токену и прочие 4xx — ошибки вызывающего.
+        /// </summary>
         internal static bool IsUnavailable(Exception ex, CancellationToken token)
         {
             if (token.IsCancellationRequested) return false;
-            if (ex is TNovApiException api) return (int)api.StatusCode >= 500;
-            return ex is HttpRequestException || ex is TimeoutException || ex is TaskCanceledException
-                || ex is WebException || ex is IOException;
+            if (ex is AggregateException agg && agg.InnerExceptions.Count == 1) ex = agg.InnerException;
+            if (ex is TNovApiException api)
+            {
+                int code = (int)api.StatusCode;
+                return code >= 500 || code == 408 || code == 429;
+            }
+            return ex is HttpRequestException || ex is TimeoutException || ex is OperationCanceledException
+                || ex is WebException || ex is IOException || ex is System.Net.Sockets.SocketException
+                || ex is ObjectDisposedException
+                || (ex.InnerException is HttpRequestException || ex.InnerException is System.Net.Sockets.SocketException);
         }
     }
 
@@ -179,6 +210,17 @@ namespace TNovCommon.Storage
                 }
             }
             catch (Exception) { }
+        }
+
+        /// <summary>Как <see cref="Put"/>, но «документа нет» не заменяет закэшированный документ с данными.</summary>
+        public static void PutUnlessErasing(StoredDocument doc)
+        {
+            if (!doc.Exists)
+            {
+                StoredDocument cached = Get(doc.Kind, doc.Key);
+                if (cached != null && cached.Version > 0) return;
+            }
+            Put(doc);
         }
 
         public static StoredDocument Get(string kind, string key)

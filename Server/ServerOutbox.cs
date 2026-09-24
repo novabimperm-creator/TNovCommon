@@ -16,7 +16,16 @@ namespace TNovCommon.Server
     /// а фоновый таймер раз в <see cref="FlushInterval"/> дописывает накопленное
     /// одним открытием на файл. Если сервер недоступен, записи остаются в очереди,
     /// а при закрытии Revit сохраняются локально (%LOCALAPPDATA%\TNov\outbox) и
-    /// досылаются при следующем запуске.
+    /// досылаются при следующем запуске. Очередь в памяти ограничена
+    /// <see cref="MaxPending"/> строками — сверх этого записи уходят в тот же локальный
+    /// outbox и подхватываются после ближайшей удачной отправки.
+    ///
+    /// Пачка, которая сейчас пишется на сервер (<c>_inFlight</c>), тоже видна завершению
+    /// работы: если запись зависла на недоступной шаре, Shutdown сохранит её локально.
+    /// Если зависшая запись потом всё-таки пройдёт, отправленные строки убираются из
+    /// локального файла. Возможен дубль, если байты на сервер записались, но закрытие
+    /// файла вернуло ошибку (или Revit закрылся раньше, чем запись завершилась) — строка
+    /// будет дописана повторно; это допустимо, потеря хуже.
     ///
     /// Формат строк в файлах не меняется: записи разделяются "\n", перед первой
     /// записью пачки ставится "\n", если файл уже не пустой.
@@ -24,6 +33,9 @@ namespace TNovCommon.Server
     public static class ServerOutbox
     {
         public static readonly TimeSpan FlushInterval = TimeSpan.FromSeconds(15);
+
+        /// <summary>Сколько строк держать в памяти; дальше — в локальный outbox.</summary>
+        public const int MaxPending = 10000;
 
         private sealed class Record
         {
@@ -36,12 +48,25 @@ namespace TNovCommon.Server
         private static List<Record> _pending = new List<Record>();
         private static Timer _timer;
         private static bool _restored;
+        private static bool _spilled;           // часть очереди лежит в локальном outbox — забрать после удачной отправки
+
+        // Пачка, которая сейчас пишется (под _lock). _inFlightGen = 0 — пачки нет или её уже сохранил SaveLocally.
+        private static List<Record> _inFlight = new List<Record>();
+        private static int _inFlightGen;
+        private static int _flushGen;
+
+        // Что сохранил SaveLocally при завершении (чтобы убрать строки, которые зависшая запись всё-таки отправила).
+        private static string _savedFile;
+        private static List<Record> _savedRecords;
 
         /// <summary>Текст последней ошибки записи на сервер (null — последняя попытка удалась).</summary>
         public static string LastError { get; private set; }
 
-        /// <summary>Сколько записей ждёт отправки.</summary>
-        public static int PendingCount { get { lock (_lock) return _pending.Count; } }
+        /// <summary>Сколько записей ждёт отправки (в очереди и в текущей пачке).</summary>
+        public static int PendingCount
+        {
+            get { lock (_lock) return _pending.Count + (_inFlightGen != 0 ? _inFlight.Count : 0); }
+        }
 
         private static string OutboxFolder =>
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TNov", "outbox");
@@ -58,6 +83,7 @@ namespace TNovCommon.Server
             {
                 _pending.Add(new Record { RelativePath = relativePath.Replace('/', '\\'), Line = line });
                 EnsureStarted();
+                if (_pending.Count >= MaxPending) SpillPending();
             }
         }
 
@@ -89,11 +115,16 @@ namespace TNovCommon.Server
             try
             {
                 List<Record> batch;
+                int gen;
                 lock (_lock)
                 {
                     if (_pending.Count == 0) return true;
                     batch = _pending;
                     _pending = new List<Record>();
+                    gen = ++_flushGen;
+                    if (gen == 0) gen = ++_flushGen;
+                    _inFlight = new List<Record>(batch);
+                    _inFlightGen = gen;
                 }
 
                 string serverPath = TNovConfigLoad.GetCachedConfig()?.ServerPath;
@@ -110,28 +141,78 @@ namespace TNovCommon.Server
                     // Группируем по файлу с сохранением порядка появления.
                     foreach (var group in batch.GroupBy(r => r.RelativePath, StringComparer.OrdinalIgnoreCase))
                     {
+                        // Завершение работы уже сохранило пачку локально — остальное отправит следующий запуск.
+                        lock (_lock)
+                            if (_inFlightGen != gen) break;
+
+                        var records = group.ToList();
                         try
                         {
-                            AppendToFile(ServerData.Combine(serverPath, group.Key), group.Select(r => r.Line));
+                            AppendToFile(ServerData.Combine(serverPath, group.Key), records.Select(r => r.Line));
                         }
                         catch (Exception ex)
                         {
-                            failed.AddRange(group);
+                            failed.AddRange(records);
                             error = ex.Message;
+                            continue;
                         }
+                        MarkSent(gen, records);
                     }
                 }
 
+                bool restoreSpilled = false;
                 lock (_lock)
                 {
-                    if (failed.Count > 0) _pending.InsertRange(0, failed);
+                    if (_inFlightGen == gen)
+                    {
+                        _inFlight = new List<Record>();
+                        _inFlightGen = 0;
+                        if (failed.Count > 0) _pending.InsertRange(0, failed);
+                    }
+                    // Иначе неотправленное уже лежит в локальном файле SaveLocally — в очередь не возвращаем.
                     LastError = error;
-                    return _pending.Count == 0;
+                    restoreSpilled = failed.Count == 0 && _spilled;
+                    if (restoreSpilled) _spilled = false;
                 }
+
+                if (restoreSpilled)
+                {
+                    // Связь есть — забрать то, что не поместилось в память; отправится на следующем тике.
+                    List<Record> spilled;
+                    try { spilled = RestoreSaved(); } catch (Exception) { spilled = new List<Record>(); }
+                    lock (_lock) _pending.InsertRange(0, spilled);
+                }
+
+                lock (_lock) return _pending.Count == 0;
             }
             finally
             {
                 Monitor.Exit(_flushLock);
+            }
+        }
+
+        /// <summary>Группа записана на сервер: убрать её из текущей пачки или, если пачку уже сохранил SaveLocally, из его файла.</summary>
+        private static void MarkSent(int gen, List<Record> sent)
+        {
+            var set = new HashSet<Record>(sent);
+            lock (_lock)
+            {
+                if (_inFlightGen == gen)
+                {
+                    _inFlight.RemoveAll(set.Contains);
+                    return;
+                }
+                if (_savedRecords == null || _savedFile == null) return;
+                int before = _savedRecords.Count;
+                _savedRecords.RemoveAll(set.Contains);
+                if (_savedRecords.Count == before) return;
+                try
+                {
+                    if (!File.Exists(_savedFile)) return; // уже забрал другой экземпляр Revit — возможен дубль
+                    if (_savedRecords.Count == 0) File.Delete(_savedFile);
+                    else File.WriteAllText(_savedFile, JsonConvert.SerializeObject(_savedRecords));
+                }
+                catch (Exception) { }
             }
         }
 
@@ -177,22 +258,55 @@ namespace TNovCommon.Server
             }
         }
 
+        /// <summary>Очередь и зависшую пачку — в локальный outbox (порядок: сначала пачка, она старше).</summary>
         private static void SaveLocally()
         {
-            List<Record> rest;
             lock (_lock)
             {
-                if (_pending.Count == 0) return;
-                rest = _pending;
+                var rest = new List<Record>();
+                if (_inFlightGen != 0)
+                {
+                    rest.AddRange(_inFlight);
+                    _inFlight = new List<Record>();
+                    _inFlightGen = 0; // Flush увидит, что пачку забрали, и не вернёт её в очередь
+                }
+                rest.AddRange(_pending);
                 _pending = new List<Record>();
+                if (rest.Count == 0) return;
+
+                string file = WriteLocalFile(rest);
+                if (file != null)
+                {
+                    _savedFile = file;
+                    _savedRecords = rest;
+                }
             }
+        }
+
+        /// <summary>Под _lock: очередь переросла <see cref="MaxPending"/> — в локальный outbox.</summary>
+        private static void SpillPending()
+        {
+            if (WriteLocalFile(_pending) == null) return; // диск недоступен — держим в памяти
+            _pending = new List<Record>();
+            _spilled = true;
+        }
+
+        private static string WriteLocalFile(List<Record> records)
+        {
             try
             {
                 Directory.CreateDirectory(OutboxFolder);
                 string file = Path.Combine(OutboxFolder, $"{DateTime.Now:yyyyMMdd-HHmmss}-{Guid.NewGuid():N}.json");
-                File.WriteAllText(file, JsonConvert.SerializeObject(rest));
+                // Через временное имя (не *.json): другой экземпляр Revit не заберёт недописанный файл.
+                string temp = file + ".tmp";
+                File.WriteAllText(temp, JsonConvert.SerializeObject(records));
+                File.Move(temp, file);
+                return file;
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private static List<Record> RestoreSaved()

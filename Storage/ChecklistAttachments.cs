@@ -1,5 +1,6 @@
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -73,8 +74,9 @@ namespace TNovCommon.Storage
         {
             if (Api == null || string.IsNullOrEmpty(fileName) || !Guid.TryParse(fileId, out Guid id)) return false;
 
-            string target = Path.Combine(PhotosRoot, itemId.ToString(), fileName);
-            if (File.Exists(target)) return false;
+            // Имя файла приходит из документа на сервере — только простое имя внутри папки пункта.
+            string target = SafePaths.PhotoPath(PhotosRoot, itemId, fileName);
+            if (target == null || File.Exists(target)) return false;
 
             Directory.CreateDirectory(Path.GetDirectoryName(target));
             string temp = target + ".part";
@@ -152,13 +154,19 @@ namespace TNovCommon.Storage
 
             if (Api == null) return File.Exists(path) ? path : null;
 
-            var events = await Api.QueryEventsAsync(new EventQuery { Kind = LogEventKind, Doc = _modelKey, Limit = 5000 }, ct).ConfigureAwait(false);
-            TNovEvent latest = events
-                .Where(e => e.Extra != null && e.Extra.Value<int?>("number") == number)
-                .OrderByDescending(e => e.Ts ?? DateTimeOffset.MinValue)
-                .FirstOrDefault();
+            TNovEvent latest;
+            try
+            {
+                latest = await Api.GetLatestEventAsync(LogEventKind, _modelKey, number, ct).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ApiDocumentStore.IsUnavailable(ex, ct))
+            {
+                // Нет связи — показываем локальную копию (могла устареть), если она есть.
+                if (File.Exists(path)) return path;
+                throw;
+            }
 
-            if (latest == null) return File.Exists(path) ? path : null;
+            if (latest?.Extra == null) return File.Exists(path) ? path : null;
 
             // Свежий лог на сервере мог появиться после нашего локального — берём серверный.
             if (!File.Exists(path) || File.GetLastWriteTimeUtc(path) < (latest.Ts ?? DateTimeOffset.MinValue).UtcDateTime)
@@ -198,6 +206,77 @@ namespace TNovCommon.Storage
         private static void TryDelete(string path)
         {
             try { File.Delete(path); } catch (Exception) { }
+        }
+    }
+
+    /// <summary>
+    /// Проверка имён файлов, пришедших из данных (документ на сервере, JSON на шаре):
+    /// только простое имя без папок, диска и «..», а итоговый путь — внутри корня.
+    /// Иначе чужой документ мог бы заставить плагин читать, писать или удалять файлы
+    /// вне папки фото.
+    /// </summary>
+    public static class SafePaths
+    {
+        /// <summary>Простое имя файла: без разделителей, диска, запрещённых символов; не "." и не "..".</summary>
+        public static bool IsSafeFileName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name) || name == "." || name == "..") return false;
+            if (name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0) return false;
+            if (name.IndexOfAny(new[] { '/', '\\', ':' }) >= 0) return false;
+            try
+            {
+                return Path.GetFileName(name) == name;
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// {root}\{sub}\{fileName}, если имя безопасно и путь не выходит за root; иначе null (с записью в лог).
+        /// <paramref name="sub"/> — папка, которую формирует сам плагин (id пункта), или null.
+        /// </summary>
+        public static string Combine(string root, string sub, string fileName)
+        {
+            if (string.IsNullOrEmpty(root) || string.IsNullOrEmpty(fileName)) return null;
+            if (!IsSafeFileName(fileName) || (sub != null && !IsSafeFileName(sub)))
+            {
+                Reject(fileName);
+                return null;
+            }
+            try
+            {
+                string combined = sub == null ? Path.Combine(root, fileName) : Path.Combine(root, sub, fileName);
+                string fullRoot = Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                    + Path.DirectorySeparatorChar;
+                string full = Path.GetFullPath(combined);
+                if (!full.StartsWith(fullRoot, StringComparison.OrdinalIgnoreCase))
+                {
+                    Reject(fileName);
+                    return null;
+                }
+                return full;
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is NotSupportedException || ex is PathTooLongException)
+            {
+                Reject(fileName);
+                return null;
+            }
+        }
+
+        /// <summary>Путь к фото пункта {root}\{id}\{fileName} или null, если имя небезопасно.</summary>
+        public static string PhotoPath(string photosRoot, Guid itemId, string fileName) =>
+            Combine(photosRoot, itemId.ToString(), fileName);
+
+        private static readonly HashSet<string> _rejected = new HashSet<string>(StringComparer.Ordinal);
+
+        private static void Reject(string name)
+        {
+            // Одно и то же имя проверяется при каждом обновлении окна — в лог пишем один раз.
+            lock (_rejected)
+                if (!_rejected.Add(name ?? "")) return;
+            try { Logger.Log($"Небезопасное имя файла в данных отклонено: «{name}»", 4); } catch (Exception) { }
         }
     }
 }

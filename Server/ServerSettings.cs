@@ -11,6 +11,8 @@ namespace TNovCommon.Server
     /// <summary>
     /// Общие настройки TNovApi для всех пользователей: файл {ServerPath}tnovapi.json
     ///   { "ApiUrl": "...", "ApiKey": "...", "ChecklistStorage": "api" | "files" }
+    /// (+ "FileSync", "FileSyncShares": [ { "id": "perm", "path": "\\\\fs-nova\\…\\_TNov\\" }, … ],
+    /// "MinPluginVersion", "Block…" — только с сервера)
     /// накладывается на локальный TNovConfig.json. Непустое значение в локальном конфиге
     /// важнее серверного — так API можно включить (или выключить) одному пользователю.
     ///
@@ -39,6 +41,7 @@ namespace TNovCommon.Server
             public string BlockBelowVersion { get; set; }
             public bool? BlockFilesMode { get; set; }
             public string BlockMessage { get; set; }
+            public FileSyncShareConfig[] FileSyncShares { get; set; }
         }
 
         /// <summary>
@@ -85,6 +88,8 @@ namespace TNovCommon.Server
             config.BlockFilesMode = s.BlockFilesMode == true;
             config.BlockMessage = s.BlockMessage;
             config.ServerChecklistStorage = s.ChecklistStorage;
+            // Список шар для FileSync — тоже только с сервера (он общий для всех офисов).
+            config.FileSyncShares = s.FileSyncShares;
         }
 
         /// <summary>Прочитать файл сразу (в фоне) — при старте Revit, чтобы первая команда уже видела настройки.</summary>

@@ -19,7 +19,10 @@ namespace TNovCommon.Storage
     ///   checklist (пункты по "id"): новые в файле — добавить, если в API такого id нет;
     ///     удалённые в файле — удалить из API, только если пункт в API равен base;
     ///     свойства — по одному: применить, если в API значение всё ещё как в base;
-    ///     изменены с обеих сторон по-разному — побеждает API (в лог).
+    ///     изменены с обеих сторон по-разному — побеждает API (в лог);
+    ///     изменён в файле, а в API удалён — правка важнее удаления, пункт возвращается (в лог).
+    ///     Так результат не зависит от порядка, в котором сливаются шары разных офисов: удаление
+    ///     по файлу одной шары не съедает правку того же пункта в файле другой.
     ///   autocheck (по "Number") и bimcheck (по "id"): пункт, изменённый в файле, берётся,
     ///     если в API его нет или "created_at" в файле новее. Пустая заготовка автопроверки
     ///     (без title) не перебивает настоящий результат. Удалений нет.
@@ -106,7 +109,15 @@ namespace TNovCommon.Storage
                 if (ItemEquals(b, t, strict: false)) continue; // в файле пункт не меняли
                 if (o == null)
                 {
-                    r.Notes.Add($"конфликт: пункт {id} изменён в файле, но удалён в API — остаётся удалённым");
+                    // Удалён в API (новой версией или по файлу другой шары), а в файле его правили:
+                    // правка важнее удаления — симметрично «удалён в файле, изменён в API — остаётся».
+                    var restored = (JObject)t.DeepClone();
+                    restored.Remove(PhotoFileIdProperty);
+                    SetPhotoFileId(restored, id, photoIds, r);
+                    ours.Add(restored);
+                    oursById[id] = restored;
+                    r.Changed = true;
+                    r.Notes.Add($"конфликт: пункт {id} изменён в файле, но удалён в API — возвращён с правкой из файла");
                     continue;
                 }
 
@@ -232,6 +243,25 @@ namespace TNovCommon.Storage
             if (!TryDate(a, out DateTimeOffset da)) return false;
             if (!TryDate(b, out DateTimeOffset db)) return true;
             return da.UtcTicks > db.UtcTicks;
+        }
+
+        /// <summary>
+        /// base для первой синхронизации без состояния, когда файл новее API: пункты API, которые
+        /// есть и в файле. Отличия свойств и новые пункты файла применяются, а пункты API, которых
+        /// в файле нет, не удаляются — неизвестно, удалил ли их старый пользователь или файл просто
+        /// другой (шара другого офиса, файл без импорта).
+        /// </summary>
+        public static JArray NoStateBase(string kind, JToken ours, JToken theirs)
+        {
+            string keyName = kind == DocumentKinds.AutoCheck ? "Number" : "id";
+            var inFile = Index(theirs as JArray ?? new JArray(), keyName);
+            var result = new JArray();
+            foreach (JObject o in (ours as JArray ?? new JArray()).OfType<JObject>())
+            {
+                string k = KeyOf(o, keyName);
+                if (k != null && inFile.ContainsKey(k)) result.Add(o.DeepClone());
+            }
+            return result;
         }
 
         // ---------------- сравнение ----------------

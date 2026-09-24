@@ -32,8 +32,10 @@ namespace TNovCommon.Storage
             {
                 var api = new ApiDocumentStore(GetClient(config));
                 // Переходный период: файлы на шаре для старых версий плагина ("FileSync": null/true).
-                if (config.FileSync != false && !string.IsNullOrWhiteSpace(config.ServerPath))
-                    return new FileSyncDocumentStore(api, config.ServerPath);
+                // Шары офисов — "FileSyncShares" из tnovapi.json (своя — совпадающая с ServerPath).
+                if (config.FileSync != false
+                    && (!string.IsNullOrWhiteSpace(config.ServerPath) || (config.FileSyncShares?.Length ?? 0) > 0))
+                    return new FileSyncDocumentStore(api, config.ServerPath, config.FileSyncShares);
                 return api;
             }
 
@@ -59,6 +61,9 @@ namespace TNovCommon.Storage
                         BaseAddress = new Uri(config.ApiUrl),
                         ApiKey = config.ApiKey,
                         UserName = Environment.UserName,
+                        // Ключа нет — вход по учётке Windows (Kerberos → токен API). ApiUrl должен быть
+                        // полным именем сервера с SPN (tnov-api.talan.udm.ru), не IP и не localhost.
+                        UseDefaultCredentials = string.IsNullOrWhiteSpace(config.ApiKey),
                         Timeout = TimeSpan.FromSeconds(10)
                     });
                     _clientSignature = signature;

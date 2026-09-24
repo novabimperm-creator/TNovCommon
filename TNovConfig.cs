@@ -111,8 +111,24 @@ namespace TNovCommon
         /// <summary>ChecklistStorage из tnovapi.json до наложения локального значения.</summary>
         [JsonIgnore] public string ServerChecklistStorage { get; set; }
 
+        /// <summary>
+        /// Шары офисов со старыми версиями плагина для синхронизации файлов (FileSync; только из
+        /// tnovapi.json). null/пусто — одна шара: ServerPath. Не менять элементы: копия конфига поверхностная.
+        /// </summary>
+        [JsonIgnore] public FileSyncShareConfig[] FileSyncShares { get; set; }
+
         public TNovConfig Clone() => (TNovConfig)MemberwiseClone();
     }
+    /// <summary>
+    /// Шара для синхронизации файлов на переходный период: "id" — [a-z0-9-]{1,32}, входит в ключ
+    /// состояния filesync-{kind} / {модель}@{id}; "path" — корень, как ServerPath (…\_TNov\).
+    /// </summary>
+    public sealed class FileSyncShareConfig
+    {
+        public string Id { get; set; }
+        public string Path { get; set; }
+    }
+
     public static class TNovConfigLoad
     {
         private static readonly object _cacheLock = new object();

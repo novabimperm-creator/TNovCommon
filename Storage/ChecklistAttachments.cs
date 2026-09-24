@@ -36,7 +36,7 @@ namespace TNovCommon.Storage
             _modelKey = modelKey;
         }
 
-        private TNovApiClient Api => (_store as ApiDocumentStore)?.Client;
+        private TNovApiClient Api => (_store as IApiDocumentStore)?.Client;
 
         public bool UsesApi => Api != null;
 

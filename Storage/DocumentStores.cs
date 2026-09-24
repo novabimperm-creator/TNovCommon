@@ -6,7 +6,8 @@ namespace TNovCommon.Storage
 {
     /// <summary>
     /// Выбор хранилища по TNovConfig.json:
-    ///   "ChecklistStorage": "api" + "ApiUrl" (+ "ApiKey") — TNovApi;
+    ///   "ChecklistStorage": "api" + "ApiUrl" (+ "ApiKey") — TNovApi; пока "FileSync" не false —
+    ///     с синхронизацией файлов на шаре для старых версий (<see cref="FileSyncDocumentStore"/>);
     ///   иначе (по умолчанию) — файлы на шаре, как раньше.
     /// </summary>
     public static class DocumentStores
@@ -28,7 +29,13 @@ namespace TNovCommon.Storage
 
             if (string.Equals(config.ChecklistStorage, StorageApi, StringComparison.OrdinalIgnoreCase)
                 && !string.IsNullOrWhiteSpace(config.ApiUrl))
-                return new ApiDocumentStore(GetClient(config));
+            {
+                var api = new ApiDocumentStore(GetClient(config));
+                // Переходный период: файлы на шаре для старых версий плагина ("FileSync": null/true).
+                if (config.FileSync != false && !string.IsNullOrWhiteSpace(config.ServerPath))
+                    return new FileSyncDocumentStore(api, config.ServerPath);
+                return api;
+            }
 
             return new FileDocumentStore(config.ServerPath);
         }

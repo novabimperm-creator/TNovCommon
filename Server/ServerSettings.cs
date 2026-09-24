@@ -33,6 +33,9 @@ namespace TNovCommon.Server
             public string ApiUrl { get; set; }
             public string ApiKey { get; set; }
             public string ChecklistStorage { get; set; }
+            public bool? FileSync { get; set; }
+            public string MinPluginVersion { get; set; }
+            public string UpdateMessage { get; set; }
         }
 
         /// <summary>Неизменяемая пара «для какого сервера — какие настройки» (публикуется одной записью).</summary>
@@ -65,6 +68,10 @@ namespace TNovCommon.Server
             if (string.IsNullOrWhiteSpace(config.ApiUrl)) config.ApiUrl = s.ApiUrl;
             if (string.IsNullOrWhiteSpace(config.ApiKey)) config.ApiKey = s.ApiKey;
             if (string.IsNullOrWhiteSpace(config.ChecklistStorage)) config.ChecklistStorage = s.ChecklistStorage;
+            if (config.FileSync == null) config.FileSync = s.FileSync;
+            // Требования к версии задаёт только сервер: локально их не переопределить.
+            config.MinPluginVersion = s.MinPluginVersion;
+            config.UpdateMessage = s.UpdateMessage;
         }
 
         /// <summary>Прочитать файл сразу (в фоне) — при старте Revit, чтобы первая команда уже видела настройки.</summary>

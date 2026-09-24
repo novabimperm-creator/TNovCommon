@@ -15,12 +15,21 @@ using TNovApi.Client;
 namespace TNovCommon.Storage
 {
     /// <summary>
+    /// Хранилище на TNovApi (<see cref="ApiDocumentStore"/> или <see cref="FileSyncDocumentStore"/>):
+    /// вложения чек-листа идут через /api/files и события.
+    /// </summary>
+    public interface IApiDocumentStore
+    {
+        TNovApiClient Client { get; }
+    }
+
+    /// <summary>
     /// Документы через TNovApi (Postgres в Перми). Каждое удачное чтение кладётся в
     /// локальный кэш %LOCALAPPDATA%\TNov\cache\documents; если API недоступен, Load
     /// отдаёт кэш с FromCache = true — окно показывает данные только для чтения.
     /// Сохранение и опрос без связи бросают <see cref="DocumentStoreUnavailableException"/>.
     /// </summary>
-    public sealed class ApiDocumentStore : IDocumentStore
+    public sealed class ApiDocumentStore : IDocumentStore, IApiDocumentStore
     {
         private readonly TNovApiClient _client;
 

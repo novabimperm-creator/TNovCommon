@@ -91,6 +91,16 @@ namespace TNovCommon
         public string ApiKey { get; set; }
         /// <summary>Где хранятся чек-листы: "files" (по умолчанию, шара) или "api".</summary>
         public string ChecklistStorage { get; set; }
+        /// <summary>
+        /// Режим API на переходный период: подтягивать правки старых версий из файлов шары и
+        /// дублировать сохранения в файлы (см. Storage\FileSync). null/true — включено, false — выключено.
+        /// </summary>
+        public bool? FileSync { get; set; }
+
+        /// <summary>Минимальная версия плагина «гг.ММдд[.минуты]» (только из tnovapi.json).</summary>
+        [JsonIgnore] public string MinPluginVersion { get; set; }
+        /// <summary>Текст предупреждения для устаревших версий (только из tnovapi.json).</summary>
+        [JsonIgnore] public string UpdateMessage { get; set; }
 
         public TNovConfig Clone() => (TNovConfig)MemberwiseClone();
     }
@@ -215,6 +225,11 @@ namespace TNovCommon
 
             //запись в файл usage (при любом типе лицензии) — в фоне, см. ServerOutbox
             try { LogUsage(className, version); } catch (Exception) { }
+
+            // Устаревшая версия: предупреждаем при каждом запуске, но команду не блокируем.
+            string outdated = PluginVersionGate.OutdatedMessage(config);
+            if (outdated != null)
+                new InfoWindow280(outdated).ShowDialog();
 
             // Раньше пользователь сразу видел ошибку записи в usage. Теперь запись отложенная,
             // поэтому предупреждаем один раз за сессию, если фоновая дозапись не проходит.

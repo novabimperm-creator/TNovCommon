@@ -74,21 +74,15 @@ namespace TNovCommon
         [JsonIgnore]
         public string DisplayDate => CreationDate.ToString("dd.MM HH:mm");
                 
+        /// <summary>
+        /// Только запоминает папку логов, без обращения к диску: вызывается в UI-потоке на каждый
+        /// пункт, а папка может лежать на шаре. (Раньше здесь был LoadLog — File.Exists по сети
+        /// и незакрытый File.Open без .txt, т.е. фактически ничего не делавший.)
+        /// Лог пишется через ChecklistAttachments.SaveLogAsync, открывается — через EnsureLogAsync.
+        /// </summary>
         public void SetLogsRootFolder(string folder)
         {
             _logsRootFolder = folder;
-            LoadLog();
-        }
-
-        private void LoadLog()
-        {
-            if (string.IsNullOrEmpty(LogFullPath) || !File.Exists(LogFullPath)) return;
-
-            try
-            {
-                File.Open(LogFullPath, FileMode.Open, FileAccess.Read);
-            }
-            catch { }
         }
 
         public void RunAutoCheck() //Метод запуска проверки, где определены все проверки исходя из их номеров

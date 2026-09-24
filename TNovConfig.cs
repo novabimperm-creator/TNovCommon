@@ -84,6 +84,15 @@ namespace TNovCommon
         public string LicenseType { get; set; }
         public string CorpName { get; set; }
         public string ServerPath { get; set; }
+
+        /// <summary>Адрес TNovApi, например http://tnov-api:5090/ (пусто — API не используется).</summary>
+        public string ApiUrl { get; set; }
+        /// <summary>Ключ доступа к TNovApi (заголовок X-TNov-Key). Временная схема до входа по учётке Windows.</summary>
+        public string ApiKey { get; set; }
+        /// <summary>Где хранятся чек-листы: "files" (по умолчанию, шара) или "api".</summary>
+        public string ChecklistStorage { get; set; }
+
+        public TNovConfig Clone() => (TNovConfig)MemberwiseClone();
     }
     public static class TNovConfigLoad
     {
@@ -113,7 +122,7 @@ namespace TNovCommon
                     _cached = config;
                     _cachedStampUtc = stamp;
                 }
-                return new TNovConfig { LicenseType = _cached.LicenseType, CorpName = _cached.CorpName, ServerPath = _cached.ServerPath };
+                return _cached.Clone();
             }
         }
 

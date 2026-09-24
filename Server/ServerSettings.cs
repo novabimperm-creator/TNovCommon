@@ -36,7 +36,16 @@ namespace TNovCommon.Server
             public bool? FileSync { get; set; }
             public string MinPluginVersion { get; set; }
             public string UpdateMessage { get; set; }
+            public string BlockBelowVersion { get; set; }
+            public bool? BlockFilesMode { get; set; }
+            public string BlockMessage { get; set; }
         }
+
+        /// <summary>
+        /// Серверные настройки изменились после фонового чтения (в т.ч. появились или пропали).
+        /// Вызывается в фоновом потоке — подписчик сам переходит в UI-поток.
+        /// </summary>
+        public static event Action Changed;
 
         /// <summary>Неизменяемая пара «для какого сервера — какие настройки» (публикуется одной записью).</summary>
         private sealed class Loaded
@@ -69,9 +78,13 @@ namespace TNovCommon.Server
             if (string.IsNullOrWhiteSpace(config.ApiKey)) config.ApiKey = s.ApiKey;
             if (string.IsNullOrWhiteSpace(config.ChecklistStorage)) config.ChecklistStorage = s.ChecklistStorage;
             if (config.FileSync == null) config.FileSync = s.FileSync;
-            // Требования к версии задаёт только сервер: локально их не переопределить.
+            // Требования к версии и блокировку задаёт только сервер: локально их не переопределить.
             config.MinPluginVersion = s.MinPluginVersion;
             config.UpdateMessage = s.UpdateMessage;
+            config.BlockBelowVersion = s.BlockBelowVersion;
+            config.BlockFilesMode = s.BlockFilesMode == true;
+            config.BlockMessage = s.BlockMessage;
+            config.ServerChecklistStorage = s.ChecklistStorage;
         }
 
         /// <summary>Прочитать файл сразу (в фоне) — при старте Revit, чтобы первая команда уже видела настройки.</summary>
@@ -147,11 +160,18 @@ namespace TNovCommon.Server
 
         private static void Publish(string serverPath, Settings settings)
         {
+            bool changed;
             lock (_publishLock)
             {
+                Loaded previous = _loaded;
+                changed = previous == null || !SameServer(previous.For, serverPath)
+                    || JsonConvert.SerializeObject(previous.Settings) != JsonConvert.SerializeObject(settings);
                 Volatile.Write(ref _loaded, new Loaded { For = serverPath, Settings = settings });
                 _persistTriedFor = serverPath; // локальная копия уже не нужна — есть свежие данные
             }
+            if (!changed) return;
+            try { Changed?.Invoke(); }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Ошибка обработчика {FileName}: {ex.Message}"); }
         }
 
         // ---------- локальная копия ----------

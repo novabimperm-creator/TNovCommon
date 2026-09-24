@@ -102,6 +102,15 @@ namespace TNovCommon
         /// <summary>Текст предупреждения для устаревших версий (только из tnovapi.json).</summary>
         [JsonIgnore] public string UpdateMessage { get; set; }
 
+        /// <summary>Жёсткая блокировка сборок старше «гг.ММдд[.минуты]» (только из tnovapi.json).</summary>
+        [JsonIgnore] public string BlockBelowVersion { get; set; }
+        /// <summary>Блокировать, если сервер требует API, а локально включены файлы (только из tnovapi.json).</summary>
+        [JsonIgnore] public bool BlockFilesMode { get; set; }
+        /// <summary>Текст окна блокировки (только из tnovapi.json).</summary>
+        [JsonIgnore] public string BlockMessage { get; set; }
+        /// <summary>ChecklistStorage из tnovapi.json до наложения локального значения.</summary>
+        [JsonIgnore] public string ServerChecklistStorage { get; set; }
+
         public TNovConfig Clone() => (TNovConfig)MemberwiseClone();
     }
     public static class TNovConfigLoad
@@ -171,6 +180,12 @@ namespace TNovCommon
                     error = $"В {configPath} не задан ServerPath";
                     return false;
                 }
+                string blocked = PluginVersionGate.BlockReason(config);
+                if (blocked != null)
+                {
+                    error = blocked.Replace("\n\n", " ");
+                    return false;
+                }
                 return true;
             }
             catch (Exception ex)
@@ -225,6 +240,14 @@ namespace TNovCommon
 
             //запись в файл usage (при любом типе лицензии) — в фоне, см. ServerOutbox
             try { LogUsage(className, version); } catch (Exception) { }
+
+            // Плагин заблокирован сервером (tnovapi.json). Кнопки на ленте уже неактивны
+            // (Application.ApplyPluginBlock) — это страховка для запуска в обход ленты.
+            // Возврат null команду не остановит (большинство вызовов его не проверяют), поэтому
+            // исключение: Revit покажет его текст в своём окне ошибки внешней команды.
+            string blocked = PluginVersionGate.BlockReason(config);
+            if (blocked != null && !PluginVersionGate.IsAllowedWhenBlocked(className))
+                throw new PluginBlockedException(blocked);
 
             // Устаревшая версия: предупреждаем при каждом запуске, но команду не блокируем.
             string outdated = PluginVersionGate.OutdatedMessage(config);

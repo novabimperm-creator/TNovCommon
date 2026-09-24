@@ -122,7 +122,9 @@ namespace TNovCommon
                     _cached = config;
                     _cachedStampUtc = stamp;
                 }
-                return _cached.Clone();
+                TNovConfig result = _cached.Clone();
+                Server.ServerSettings.ApplyTo(result);
+                return result;
             }
         }
 

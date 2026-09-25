@@ -34,7 +34,7 @@ namespace TNovCommon
         public ICommand SelectCommand { get; }
         public ICommand CloseCommand { get; }
 
-        public ElementsTreeWindow(UIApplication uiApp, string idsCsv, string TNovclassname,DateTime dateTime,string TNovVersion)
+        public ElementsTreeWindow(UIApplication uiApp, string idsCsv, string TNovclassname,DateTime dateTime,string TNovVersion, string header = null)
         {
             _uiApp = uiApp;
             _doc = uiApp.ActiveUIDocument.Document;
@@ -51,6 +51,7 @@ namespace TNovCommon
             _logFilePath = logPath;
             InitializeComponent();
             DataContext = this;
+            if (!string.IsNullOrEmpty(header)) { HeaderText.Text = header.ToUpper(); Title = header; }
 
             SelectCommand = new RelayCommand1(SelectElements);
             CloseCommand = new RelayCommand1(Close);

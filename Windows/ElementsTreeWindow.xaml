@@ -50,7 +50,8 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="35"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="НЕОБРАБОТАННЫЕ ЭЛЕМЕНТЫ"
+                    <TextBlock x:Name="HeaderText"
+                               Text="НЕОБРАБОТАННЫЕ ЭЛЕМЕНТЫ"
                                Grid.Column="0"
                                Foreground="{StaticResource AccentBrush}"
                                FontSize="15"

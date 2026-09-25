@@ -334,6 +334,7 @@ namespace TNovCommon
             8, // Заполненность Назначения помещений
             9, // Постпроверка ADSK (ВК/ОВ)
             10, // Проблемы координации с файлом РФ
+            11, // Арматура и заглушки труб над кабельными лотками (ВК/ОВ)
             
         };
         public List<AutoCheckItem> GetBaseItems(DateTime dateTime)

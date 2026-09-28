@@ -34,7 +34,13 @@ namespace TNovCommon
         public ICommand SelectCommand { get; }
         public ICommand CloseCommand { get; }
 
-        public ElementsTreeWindow(UIApplication uiApp, string idsCsv, string TNovclassname,DateTime dateTime,string TNovVersion, string header = null)
+        // Сигнатура без header сохранена для бинарной совместимости с плагинами, собранными до её появления
+        public ElementsTreeWindow(UIApplication uiApp, string idsCsv, string TNovclassname,DateTime dateTime,string TNovVersion)
+            : this(uiApp, idsCsv, TNovclassname, dateTime, TNovVersion, null)
+        {
+        }
+
+        public ElementsTreeWindow(UIApplication uiApp, string idsCsv, string TNovclassname,DateTime dateTime,string TNovVersion, string header)
         {
             _uiApp = uiApp;
             _doc = uiApp.ActiveUIDocument.Document;

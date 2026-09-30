@@ -37,7 +37,28 @@
             Background="{StaticResource BgBrush}"
             BorderBrush="{StaticResource AccentBrush}"
             BorderThickness="1">
-        <Grid Margin="12">
+        <Grid>
+        <!-- Свёрнутое состояние: заливка прогресса на всё окно, без рамки; кнопка «v» поверх -->
+        <ProgressBar x:Name="StripBar"
+                     Visibility="Collapsed"
+                     IsHitTestVisible="False"
+                     Minimum="{Binding Minimum, ElementName=TNov_ProgressBar}"
+                     Maximum="{Binding Maximum, ElementName=TNov_ProgressBar}"
+                     Value="{Binding Value, ElementName=TNov_ProgressBar}">
+            <ProgressBar.Template>
+                <ControlTemplate TargetType="ProgressBar">
+                    <Grid>
+                        <Border x:Name="PART_Track"/>
+                        <Border x:Name="PART_Indicator"
+                                Background="{StaticResource AccentBrush}"
+                                CornerRadius="11"
+                                Margin="1"
+                                HorizontalAlignment="Left"/>
+                    </Grid>
+                </ControlTemplate>
+            </ProgressBar.Template>
+        </ProgressBar>
+        <Grid x:Name="ContentGrid" Margin="12">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -62,18 +83,6 @@
                                FontSize="16"
                                FontWeight="Bold"
                                VerticalAlignment="Center"/>
-                    <ProgressBar x:Name="StripBar"
-                                 Grid.Column="0"
-                                 Style="{StaticResource DarkProgressBarStyle}"
-                                 Height="14"
-                                 Margin="0,0,10,0"
-                                 VerticalAlignment="Center"
-                                 HorizontalAlignment="Stretch"
-                                 Visibility="Collapsed"
-                                 IsHitTestVisible="False"
-                                 Minimum="{Binding Minimum, ElementName=TNov_ProgressBar}"
-                                 Maximum="{Binding Maximum, ElementName=TNov_ProgressBar}"
-                                 Value="{Binding Value, ElementName=TNov_ProgressBar}"/>
                     <Button x:Name="CollapseButton"
                             Content="^"
                             Grid.Column="1"
@@ -122,6 +131,7 @@
                                Style="{StaticResource DarkProgressBarLabelStyle}"/>
                 </StackPanel>
             </Grid>
+        </Grid>
         </Grid>
     </Border>
 </Window>

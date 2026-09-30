@@ -46,8 +46,8 @@ namespace TNovCommon
             else CollapseToStrip();
         }
 
-        // Полоска: прогресс показывает StripBar в шапке (значения привязаны к основному
-        // ProgressBar), числа и текст скрыты; ширина окна не меняется.
+        // Полоска: прогресс — заливка StripBar на всё окно (значения привязаны к основному
+        // ProgressBar), кнопка «v» поверх; числа и текст скрыты; ширина окна не меняется.
         private void CollapseToStrip()
         {
             _restoreHeight = ActualHeight;
@@ -57,12 +57,19 @@ namespace TNovCommon
             ProgressRow.Visibility = System.Windows.Visibility.Collapsed;
             TitleText.Visibility = System.Windows.Visibility.Collapsed;
             StripBar.Visibility = System.Windows.Visibility.Visible;
-            TitleBar.Margin = new Thickness(6);
+            TitleBar.Margin = new Thickness(0);
+            ContentGrid.Margin = new Thickness(4);
             CollapseButton.Content = "v";
             CollapseButton.ToolTip = "Развернуть";
 
             MinHeight = 0;
-            SizeToContent = SizeToContent.Height;
+            // Высоту задаём явно по содержимому: SizeToContent здесь не уменьшал окно.
+            SizeToContent = SizeToContent.Manual;
+            UpdateLayout();
+            var root = (UIElement)Content;
+            root.Measure(new Size(ActualWidth, double.PositiveInfinity));
+            Height = root.DesiredSize.Height;
+            UpdateLayout();
             Opacity = IsMouseOver ? 1 : CollapsedOpacity;
             _isCollapsed = true;
         }
@@ -75,11 +82,13 @@ namespace TNovCommon
             TitleText.Visibility = System.Windows.Visibility.Visible;
             StripBar.Visibility = System.Windows.Visibility.Collapsed;
             TitleBar.Margin = new Thickness(6, 6, 6, 10);
+            ContentGrid.Margin = new Thickness(12);
             CollapseButton.Content = "^";
             CollapseButton.ToolTip = "Свернуть в полоску";
 
             MinHeight = _restoreMinHeight;
             Height = _restoreHeight;
+            UpdateLayout();
             Opacity = 1;
             _isCollapsed = false;
         }

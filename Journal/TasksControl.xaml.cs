@@ -96,6 +96,28 @@ namespace TNovCommon
                 historyWindow.ShowDialog();
             }
         }
+        /// <summary>
+        /// Вложенная таблица элементов не должна «съедать» колесо: когда ей прокручивать
+        /// некуда, прокрутка уходит внешней таблице журнала.
+        /// </summary>
+        private void NestedGrid_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            var nested = sender as DependencyObject;
+            var scroll = nested == null ? null : FindVisualChild<ScrollViewer>(nested, null);
+            bool canScroll = scroll != null &&
+                (e.Delta > 0 ? scroll.VerticalOffset > 0 : scroll.VerticalOffset < scroll.ScrollableHeight);
+            if (canScroll) return;
+
+            var parent = VisualTreeHelper.GetParent(nested) as UIElement;
+            if (parent == null) return;
+            e.Handled = true;
+            parent.RaiseEvent(new System.Windows.Input.MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
+            {
+                RoutedEvent = UIElement.MouseWheelEvent,
+                Source = sender
+            });
+        }
+
         private void ClearFiltersButton_Click(object sender, RoutedEventArgs e)
         {
             // Сбрасываем текстовые поля в комбинированных списках
@@ -185,7 +207,7 @@ namespace TNovCommon
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
             {
                 var child = VisualTreeHelper.GetChild(parent, i);
-                if (child is T element && element.Name == name)
+                if (child is T element && (name == null || element.Name == name))
                     return element;
                 var result = FindVisualChild<T>(child, name);
                 if (result != null)
@@ -237,6 +259,7 @@ namespace TNovCommon
                     {
                         item.ModelName = fileNameWithoutExtension;
                         item.JsonFileName = fileNameWithoutExtension;
+                        item.PrepareElements();
                         foreach (string p in projects)
                         {
                             if (fileNameWithoutExtension.Contains(p))

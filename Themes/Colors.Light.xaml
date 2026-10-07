@@ -14,5 +14,10 @@
     <SolidColorBrush x:Key="SubtleHoverBrush" Color="#E7F0EB"/>
     <SolidColorBrush x:Key="RowHoverBrush" Color="#E6EFEA"/>
     <SolidColorBrush x:Key="SelectedHoverBrush" Color="#C5E6D2"/>
+    <!-- Журнал заданий: элементы, изменённые в последней версии -->
+    <SolidColorBrush x:Key="ElementNewBrush" Color="#D4F0DE"/>
+    <SolidColorBrush x:Key="ElementChangedBrush" Color="#FBE8B8"/>
+    <SolidColorBrush x:Key="ElementRemovedBrush" Color="#E4E6E5"/>
+    <SolidColorBrush x:Key="ElementErrorBrush" Color="#C62828"/>
 
 </ResourceDictionary>

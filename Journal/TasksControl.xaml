@@ -11,6 +11,108 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Styles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- Элементы задания: подсветка изменений последней версии -->
+            <Style x:Key="ElementRowStyle" TargetType="DataGridRow" BasedOn="{StaticResource DarkDataGridRowStyle}">
+                <Setter Property="MinHeight" Value="26"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding ChangeKind}" Value="new">
+                        <Setter Property="Background" Value="{StaticResource ElementNewBrush}"/>
+                        <Setter Property="ToolTip" Value="Новое в последней версии"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding ChangeKind}" Value="changed">
+                        <Setter Property="Background" Value="{StaticResource ElementChangedBrush}"/>
+                        <Setter Property="ToolTip" Value="Изменено в последней версии"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding ChangeKind}" Value="removed">
+                        <Setter Property="Background" Value="{StaticResource ElementRemovedBrush}"/>
+                        <Setter Property="ToolTip" Value="Удалено в последней версии"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding State}" Value="удалено">
+                        <Setter Property="Foreground" Value="{StaticResource MutedBrush}"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="ElementMarkTextStyle" TargetType="TextBlock" BasedOn="{StaticResource DarkDataGridTextElementStyle}">
+                <Setter Property="Text" Value="{Binding Mark}"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding MarkEmpty}" Value="True">
+                        <Setter Property="Text" Value="(пусто)"/>
+                        <Setter Property="Foreground" Value="{StaticResource ElementErrorBrush}"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- Щелчок по элементу: его история по версиям -->
+            <DataTemplate x:Key="ElementHistoryTemplate">
+                <ItemsControl ItemsSource="{Binding HistoryEntries}" Margin="28,2,8,8">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="0,1"
+                                       Foreground="{StaticResource PrimaryTextBrush}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </DataTemplate>
+
+            <!-- Щелчок по группе: элементы задания -->
+            <DataTemplate x:Key="GroupElementsTemplate">
+                <Border Margin="24,4,8,10">
+                    <Grid>
+                        <TextBlock Text="История элементов ведётся с версии, выданной после обновления плагина."
+                                   Foreground="{StaticResource MutedBrush}" FontStyle="Italic" Margin="0,4">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Elements}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <DataGrid ItemsSource="{Binding Elements}"
+                                  ColumnHeaderStyle="{StaticResource DarkDataGridColumnHeaderStyle}"
+                                  CellStyle="{StaticResource DarkDataGridCellStyle}"
+                                  RowStyle="{StaticResource ElementRowStyle}"
+                                  RowDetailsTemplate="{StaticResource ElementHistoryTemplate}"
+                                  RowDetailsVisibilityMode="VisibleWhenSelected"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  SelectionMode="Single"
+                                  HorizontalAlignment="Left"
+                                  MaxHeight="360"
+                                  PreviewMouseWheel="NestedGrid_PreviewMouseWheel">
+                            <DataGrid.Style>
+                                <Style TargetType="DataGrid" BasedOn="{StaticResource DarkDataGridStyle}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Elements}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.Style>
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="Марка">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Style="{StaticResource ElementMarkTextStyle}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="ID" Binding="{Binding ElementId}" ElementStyle="{StaticResource DarkDataGridTextElementStyle}"/>
+                                <DataGridTextColumn Header="Семейство" Binding="{Binding Family}" ElementStyle="{StaticResource DarkDataGridTextElementStyle}"/>
+                                <DataGridTextColumn Header="Размер, мм" Binding="{Binding SizeText}" ElementStyle="{StaticResource DarkDataGridTextElementStyle}"/>
+                                <DataGridTextColumn Header="Состояние" Binding="{Binding State}" ElementStyle="{StaticResource DarkDataGridTextElementStyle}"/>
+                                <DataGridTextColumn Header="Изменено в версии" Binding="{Binding LastChangedVersion}" ElementStyle="{StaticResource DarkDataGridTextElementStyle}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Border>
+            </DataTemplate>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -92,6 +194,9 @@
                       CellStyle="{StaticResource DarkDataGridCellStyle}"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
+                      SelectionMode="Single"
+                      RowDetailsVisibilityMode="VisibleWhenSelected"
+                      RowDetailsTemplate="{StaticResource GroupElementsTemplate}"
                       EnableRowVirtualization="True"
                       EnableColumnVirtualization="True">
                 <DataGrid.RowStyle>
@@ -170,6 +275,10 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+
+                    <DataGridTextColumn Header="Элементы"
+                                        Binding="{Binding ElementsSummary}"
+                                        ElementStyle="{StaticResource DarkDataGridTextElementStyle}"/>
 
                     <DataGridTextColumn Header="Дата выдачи"
                                         Binding="{Binding TaskDate}"

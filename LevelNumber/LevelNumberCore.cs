@@ -102,7 +102,7 @@ namespace TNovCommon
             elems.AddRange(All(doc, BuiltInCategory.OST_SpecialityEquipment));
             elems.AddRange(All(doc, BuiltInCategory.OST_PlumbingFixtures));
             elems.AddRange(All(doc, BuiltInCategory.OST_NurseCallDevices));                     //устройства вызова и оповещения
-            elems.AddRange(Of<SlabEdge>(doc, BuiltInCategory.OST_EdgeSlab));                    //ребра плит
+            elems.AddRange(Of<HostedSweep>(doc, BuiltInCategory.OST_EdgeSlab).OfType<SlabEdge>()); //ребра плит (OfClass(SlabEdge) Revit не поддерживает)
             elems.AddRange(Of<Stairs>(doc, BuiltInCategory.OST_Stairs));
             elems.AddRange(Of<FamilyInstance>(doc, BuiltInCategory.OST_Stairs));                //лестницы семействами
             elems.AddRange(Of<Railing>(doc, BuiltInCategory.OST_StairsRailing));

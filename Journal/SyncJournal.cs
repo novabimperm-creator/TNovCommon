@@ -21,11 +21,7 @@ namespace TNovCommon
             TNovConfig config = TNovConfigLoad.LoadConfig(className, version);
             if (config == null) return Result.Failed;
 
-            if (config.LicenseType != "corp")
-            {
-                new InfoWindow280("Данный функционал доступен только при наличии Корпоративной лицензии!").ShowDialog();
-                return Result.Failed;
-            }
+            if (!CorpGate.Require(config)) return Result.Failed;
 
             UIDocument uidoc = RevitAPI.UiDocument;
             if (requireSavedDocument)

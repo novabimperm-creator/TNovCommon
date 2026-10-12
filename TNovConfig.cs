@@ -57,15 +57,14 @@ namespace TNovCommon
 
     public static class ConnectionStringProvider
     {
-        // ===== ЛОКАЛЬНОЕ ПОДКЛЮЧЕНИЕ (раскомментировано) =====
-        private static readonly string _connectionString =
-            "Host=localhost;Port=5432;Database=TNov;Username=postgres;Password=Oanwts89!;";
+        // Строка подключения к экспериментальной БД — только из переменной окружения:
+        // репозитории публичные, пароль в коде не храним. Пример значения:
+        // Host=localhost;Port=5432;Database=TNov;Username=postgres;Password=…;
+        public const string EnvironmentVariable = "TNOV_PG_CONNECTION";
 
-        // ===== СЕРВЕРНОЕ ПОДКЛЮЧЕНИЕ (закомментировано для будущего использования) =====
-        // private static readonly string _connectionString =
-        //    "Host=192.168.0.100;Port=5432;Database=TNov;Username=plugin_user;Password=strong_password;SSL Mode=Prefer;";
-
-        public static string GetConnectionString() => _connectionString;
+        public static string GetConnectionString() =>
+            Environment.GetEnvironmentVariable(EnvironmentVariable)
+            ?? throw new InvalidOperationException($"Не задана переменная окружения {EnvironmentVariable} (строка подключения к БД TNov).");
     }
     
     public static class TNovProvider
@@ -154,12 +153,32 @@ namespace TNovCommon
                 {
                     TNovConfig config = JsonConvert.DeserializeObject<TNovConfig>(File.ReadAllText(path));
                     if (config == null) throw new InvalidDataException($"Пустой файл конфигурации {path}");
+                    // Личная конфигурация без ServerPath (архив install-personal): данные — в папке TNovClient.
+                    if (string.IsNullOrWhiteSpace(config.ServerPath) && !CorpGate.IsCorp(config))
+                        config.ServerPath = Path.GetDirectoryName(path) + "\\";
+                    if (!CorpGate.IsCorp(config))
+                        EnsurePersonalFolders(config.ServerPath);
                     _cached = config;
                     _cachedStampUtc = stamp;
                 }
                 TNovConfig result = _cached.Clone();
                 Server.ServerSettings.ApplyTo(result);
                 return result;
+            }
+        }
+
+        /// <summary>
+        /// Подпапки «сервера», в которые модули пишут, не проверяя их наличие. На корпоративной
+        /// шаре они есть всегда, а в личной конфигурации «сервер» — пустая папка TNovClient.
+        /// </summary>
+        private static readonly string[] PersonalFolders = { "users", "projects", "tasks", @"tasks\marks_log", "roomsBackup" };
+
+        private static void EnsurePersonalFolders(string serverPath)
+        {
+            foreach (string folder in PersonalFolders)
+            {
+                try { Server.ServerDirectories.Ensure(Path.Combine(Server.ServerData.NormalizeRoot(serverPath), folder)); }
+                catch (Exception) { }
             }
         }
 
@@ -227,7 +246,31 @@ namespace TNovCommon
             DateTime dateTime = DateTime.Now;
             string date = dateTime.ToString(); date = date.Replace(",", "");
 
+            RotatePersonalUsage();
             Server.ServerOutbox.AppendLine("usage.txt", date + "," + userName + "," + docName + "," + className + "," + version);
+        }
+
+        private const long PersonalUsageMaxBytes = 2 * 1024 * 1024;
+
+        /// <summary>
+        /// Личная конфигурация: usage.txt лежит в папке TNovClient и никуда не уходит —
+        /// при 2 МБ переносим его в usage.old.txt (одна предыдущая порция для «Собрать логи»).
+        /// На корпоративном сервере файл общий, его не трогаем.
+        /// </summary>
+        private static void RotatePersonalUsage()
+        {
+            try
+            {
+                TNovConfig config = GetCachedConfig();
+                if (config == null || CorpGate.IsCorp(config) || string.IsNullOrEmpty(config.ServerPath)) return;
+                string usage = Server.ServerData.PathOf("usage.txt");
+                var info = new FileInfo(usage);
+                if (!info.Exists || info.Length < PersonalUsageMaxBytes) return;
+                string old = Server.ServerData.PathOf("usage.old.txt");
+                if (File.Exists(old)) File.Delete(old);
+                File.Move(usage, old);
+            }
+            catch (Exception) { }
         }
 
         public static TNovConfig LoadConfig(string className, string version)

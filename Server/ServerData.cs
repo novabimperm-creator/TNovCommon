@@ -35,6 +35,20 @@ namespace TNovCommon.Server
             return Combine(config.ServerPath, relativePath);
         }
 
+        /// <summary>
+        /// Корень серверной папки для Path.Combine: «/» → «\», путь без «\\» и без буквы
+        /// диска считается UNC («fs-nova/…» → «\\fs-nova\…»). Локальный путь с буквой
+        /// диска (личная конфигурация, тестовая папка) не трогаем.
+        /// </summary>
+        public static string NormalizeRoot(string serverPath)
+        {
+            if (string.IsNullOrWhiteSpace(serverPath)) return serverPath;
+            string path = serverPath.Replace('/', '\\');
+            if (!path.StartsWith(@"\\") && !Path.IsPathRooted(path))
+                path = @"\\" + path.TrimStart('\\');
+            return path;
+        }
+
         internal static string Combine(string serverPath, string relativePath)
         {
             // ServerPath исторически хранится со слешем на конце и склеивается строкой.

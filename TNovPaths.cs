@@ -9,6 +9,21 @@ namespace TNovCommon
     {
         public const string ReleasesFile = @"\\fs-nova\Distr\0.For Admin\_TNov\releases";
 
+        /// <summary>
+        /// Журнал релизов для текущей конфигурации: в личной — {ServerPath}releases
+        /// (его кладёт TNovClient из зеркала Google Drive), иначе общий на fs-nova.
+        /// </summary>
+        public static string CurrentReleasesFile
+        {
+            get
+            {
+                TNovConfig config = TNovConfigLoad.GetCachedConfig();
+                if (config != null && !CorpGate.IsCorp(config) && !string.IsNullOrEmpty(config.ServerPath))
+                    return System.IO.Path.Combine(Server.ServerData.NormalizeRoot(config.ServerPath), "releases");
+                return ReleasesFile;
+            }
+        }
+
         /// <summary>Корень корпоративной BIM-библиотеки.</summary>
         public const string BimLibrary = @"\\fs-nova\NOVA\04_БИБЛИОТЕКА\BIM";
 

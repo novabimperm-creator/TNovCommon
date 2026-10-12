@@ -45,16 +45,7 @@ namespace TNovCommon
                 UserNameTextBlock.Text = userName;
                 UserNamePrefixTextBlock.Text = "Пользователь Revit:";
 
-                string[] rolesFile = TNovCommon.Server.ServerData.ReadAllLines("roles.txt");
-                foreach (string role in rolesFile)
-                {
-                    if (role.Contains(userName))
-                    {
-                        string[] line = role.Split(',');
-                        userDepartment = line[1];
-                        break;
-                    }
-                }
+                userDepartment = RolesService.GetCurrentUser(userName).Department;
                 switch (userDepartment)
                 {
                     case "BIM": UserRoleTextBlock.Text = "BIM"; break;

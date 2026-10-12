@@ -72,6 +72,24 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
     <Reference Include="System.IO.Compression" />
   </ItemGroup>
+
+  <!-- ===== Бинарная совместимость с модулями в actual =====
+       TNovCommon выпускается без пересборки зависимых модулей, поэтому публичное API НЕЛЬЗЯ удалять,
+       переименовывать и менять сигнатуры (тип свойства, параметры, static/instance): модули, собранные
+       против старой версии, упадут в Revit с MissingMethodException / TypeLoadException.
+       Ненужное оставлять заглушкой с [Obsolete("...")], например свойство, которое просто игнорируется.
+       После сборки свежий TNovCommon.dll проверяется против TNov*.dll в actual (TNovReleaser.exe в режиме check);
+       найденное выводится предупреждениями, сборка не прерывается. -->
+  <PropertyGroup>
+    <TNovCompatCheckExe>$(MSBuildThisFileDirectory)..\TNovReleaser\bin\Release\TNovReleaser.exe</TNovCompatCheckExe>
+    <TNovActualDir>\\fs-nova\Distr\0.For Admin\_TNov\actual\$(RevitVersion)\TNov</TNovActualDir>
+  </PropertyGroup>
+  <Target Name="CheckCompatibilityWithActual" AfterTargets="Build"
+          Condition="Exists('$(TNovCompatCheckExe)') And '$(RevitVersion)' != ''">
+    <Exec Command="&quot;$(TNovCompatCheckExe)&quot; --check &quot;$(OutDir.TrimEnd('\'))&quot; &quot;$(TNovActualDir)&quot; $(TargetFileName)"
+          IgnoreExitCode="true" ContinueOnError="true" StdOutEncoding="utf-8" />
+  </Target>
+
   <!-- ===== Версионирование ===== -->
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="powershell -ExecutionPolicy Bypass -File &quot;$(ProjectDir)UpdateVersion.ps1&quot;" />

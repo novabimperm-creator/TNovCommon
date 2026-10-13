@@ -10,15 +10,10 @@ namespace TNovCommon
             IList<FailureMessageAccessor> failures = accessor.GetFailureMessages();
             foreach (FailureMessageAccessor failureMessageAccessor in failures)
             {
-                var id = failureMessageAccessor.GetFailureDefinitionId();
-                var failureSeverity = accessor.GetSeverity();
-                if (failureSeverity == FailureSeverity.Warning)
+                //серьезность конкретного сообщения (accessor.GetSeverity() - наибольшая по всем сообщениям)
+                if (failureMessageAccessor.GetSeverity() == FailureSeverity.Warning)
                 {
                     accessor.DeleteWarning(failureMessageAccessor);
-                }
-                else
-                {
-                    return FailureProcessingResult.Continue;
                 }
             }
             return FailureProcessingResult.Continue;

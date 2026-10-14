@@ -129,6 +129,7 @@ namespace TNovCommon
 
             // ---- Сети ----
             new HelpTopic("Сводная спека", "MEPspec", "Сводная спецификация"),
+            new HelpTopic("Спеку на листы", "MEPspec", "Сводная спецификация"),
             new HelpTopic("ADSK Стенки", "MEPductthickness", "Стенки Классы"),
             new HelpTopic("Схемы вентиляции", "MEPviews", "Виды для работы и оформления"),
             new HelpTopic("Схемы ОВ2", "MEPviews", "Виды для работы и оформления"),

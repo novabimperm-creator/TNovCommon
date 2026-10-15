@@ -59,6 +59,9 @@ namespace TNovCommon
         /// <summary>Вики плагина — целевой адрес справки.</summary>
         public const string WikiBase = @"https://tnov.pm-nova.ru/wiki/";
 
+        /// <summary>Учебный портал (Moodle) — кнопка на панели «Справка».</summary>
+        public const string LearningPortal = @"https://moodle.talan.group/";
+
 
         // Слаг задан           -> страница в вики плагина.
         // Слаг пуст, legacy есть -> страница ещё на старом портале.

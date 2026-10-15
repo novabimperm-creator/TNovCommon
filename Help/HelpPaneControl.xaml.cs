@@ -226,6 +226,11 @@ namespace TNovCommon.Help
             OpenExternal(url);
         }
 
+        private void LearningPortalButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenExternal(HelpLinks.LearningPortal);
+        }
+
         private void OnLinkClicked(object sender, string href)
         {
             if (string.IsNullOrEmpty(href))

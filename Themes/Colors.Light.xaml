@@ -19,5 +19,8 @@
     <SolidColorBrush x:Key="ElementChangedBrush" Color="#FBE8B8"/>
     <SolidColorBrush x:Key="ElementRemovedBrush" Color="#E4E6E5"/>
     <SolidColorBrush x:Key="ElementErrorBrush" Color="#C62828"/>
+    <!-- Выделенная кнопка (жёлтая) и текст на ней -->
+    <SolidColorBrush x:Key="HighlightBrush" Color="#F5C842"/>
+    <SolidColorBrush x:Key="HighlightTextBrush" Color="#1A2A24"/>
 
 </ResourceDictionary>

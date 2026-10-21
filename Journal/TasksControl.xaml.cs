@@ -268,7 +268,66 @@ namespace TNovCommon
                 Console.WriteLine($"Ошибка: {ex.Message}");
             }
 
-            return tasks;
+            return MergeWithSite(tasks, projects);
+        }
+
+        /// <summary>
+        /// Переходная схема (10.2026): журнал TNovPRO — основной источник, JSON на
+        /// сервере — резерв. По каждой группе берём запись сайта, если только JSON
+        /// не ушёл вперёд по версии (выдача прошла, когда сайт был недоступен).
+        /// Истории комментариев на сайте в журнальной форме нет, элементы есть не
+        /// у всех — их добираем из JSON, а для групп только с сайта — запросом
+        /// элементов модели. Сайт недоступен — журнал целиком из JSON.
+        /// </summary>
+        private static List<HoleGroupBaseItem> MergeWithSite(List<HoleGroupBaseItem> json, List<string> projects)
+        {
+            List<HoleGroupBaseItem> site = TasksJournalSite.TryLoad();
+            if (site == null) return json;
+
+            string Key(HoleGroupBaseItem i) => (i.ModelName ?? "").ToLowerInvariant() + "|" + (i.HoleGroupName ?? "").ToLowerInvariant();
+            int Ver(HoleGroupBaseItem i) => int.TryParse(i.TaskVersion, out int v) ? v : 0;
+
+            var byKey = new Dictionary<string, HoleGroupBaseItem>();
+            foreach (var j in json) byKey[Key(j)] = j;
+
+            var result = new List<HoleGroupBaseItem>();
+            var used = new HashSet<string>();
+            var needElements = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var s in site)
+            {
+                string key = Key(s);
+                if (!used.Add(key)) continue;
+                byKey.TryGetValue(key, out HoleGroupBaseItem j);
+                if (j != null && Ver(j) > Ver(s)) { result.Add(j); continue; }
+                if (j != null)
+                {
+                    if (s.Elements == null) s.Elements = j.Elements;
+                    if (s.MEPCommentsHistory == null) s.MEPCommentsHistory = j.MEPCommentsHistory;
+                    if (s.MEPComments == null) s.MEPComments = j.MEPComments;   // сервер до 10.2026
+                    if (s.ProjectName == null) s.ProjectName = j.ProjectName;
+                    if (s.STStatus == null) { s.STStatus = j.STStatus; s.STModelName = j.STModelName; s.STMisc = j.STMisc; s.STCheckDate = j.STCheckDate; }
+                    s.JsonFileName = j.JsonFileName;
+                }
+                if (s.ProjectName == null)
+                    s.ProjectName = projects.FirstOrDefault(p => !string.IsNullOrEmpty(p) && (s.ModelName ?? "").Contains(p));
+                if (s.Elements == null) needElements.Add(s.ModelName);
+                result.Add(s);
+            }
+            // группы, которых на сайте нет (выданы до TNovPRO или мимо него)
+            foreach (var j in json) if (!used.Contains(Key(j))) result.Add(j);
+
+            foreach (string model in needElements)
+            {
+                var els = TasksJournalSite.TryLoadElements(model);
+                if (els == null) continue;
+                foreach (var s in result)
+                    if (s.Elements == null && string.Equals(s.ModelName, model, StringComparison.OrdinalIgnoreCase)
+                        && els.TryGetValue(s.HoleGroupName ?? "", out var list))
+                        s.Elements = list;
+            }
+            foreach (var s in result) s.PrepareElements();
+            Logger.Log("Журнал заданий: с сайта " + site.Count + ", всего " + result.Count, 1);
+            return result;
         }
 
         public static List<string> GetJsonFiles(string folderPath, bool recursive = false)

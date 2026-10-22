@@ -30,15 +30,18 @@ namespace TNovCommon.Storage
 
         private static readonly object _fileLock = new object();
         private readonly string _serverPath;
+        private readonly string _folder;
 
-        public FileDocumentStore(string serverPath)
+        /// <param name="folder">Папка документов относительно серверной (по умолчанию projects — документы моделей).</param>
+        public FileDocumentStore(string serverPath, string folder = "projects")
         {
             _serverPath = serverPath;
+            _folder = folder;
         }
 
         public string Name => "files";
 
-        private string ProjectsFolder => Server.ServerData.Combine(_serverPath, "projects");
+        private string ProjectsFolder => Server.ServerData.Combine(_serverPath, _folder);
 
         public string PathOf(string kind, string key) =>
             Path.Combine(ProjectsFolder, $"{key},{DocumentKinds.FileSuffix(kind)}.json");
